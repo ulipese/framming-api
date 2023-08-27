@@ -2,12 +2,7 @@ require("dotenv").config({ path: __dirname + "/./../../.env" });
 const mysql = require("mysql2/promise");
 
 exports.dbQuery = async function dbQuery(query, values) {
-  const connection = await mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "401978ed",
-    database: "dbTeste",
-  });
+  const connection = await mysql.createConnection(process.env.DATABASE_URL);
   // query database
   const [rows] = await connection.execute(query, values);
   return rows;
