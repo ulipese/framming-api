@@ -12,6 +12,13 @@ class UserRepository {
     );
     return user;
   }
+  async findByUsername(username) {
+    const user = await db.dbQuery(
+      "SELECT * FROM tbUsuario WHERE nickUsuario = ?;",
+      [username]
+    );
+    return user;
+  }
   async findByEmail(email) {
     const user = await db.dbQuery(
       "SELECT * FROM tbUsuario WHERE emailUsuario = ?;",
@@ -31,7 +38,7 @@ class UserRepository {
         `${user.tipoUsuario}`,
       ]
     );
-    
+
     return user;
   }
   async update() {}

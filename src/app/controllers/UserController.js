@@ -21,9 +21,11 @@ class UserController {
       return response.status(200).json(user);
     }
 
-    const { email, password } = await request.body;
+    const { username, email, password } = await request.body;
 
-    const [user] = await UserRepository.findByEmail(email);
+    const [user] = username
+      ? await UserRepository.findByUsername(username)
+      : await UserRepository.findByEmail(email);
 
     try {
       if (!user) {
