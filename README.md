@@ -5,11 +5,14 @@ https://https://framming-api.onrender.com/
 
 ## Endpoints
 
-| Endpoints (principais)  | Parâmetros do Body (json)                                         | Método      |
-| ------------------------| ------------------------------------------------------------------|-------------|
-|/users                   | Nenhum                                                            | GET         |            
-|/users/id                | Nenhum                                                            | GET         |                         
-|/users/register          | name, username, email, password, userType                         | POST        |                   
-|/users/login             | email ou username, password                                       | POST        |                   
-|/movies                  | Nenhum                                                            | GET         |  
-|/movies/id               | Nenhum                                                            | GET         | 
+| Endpoints (principais)  | Parâmetros do Body (json)                                         | Método      | Explicação      
+| ------------------------| ------------------------------------------------------------------|-------------|-----------------
+|/users                   | Nenhum                                                            | GET         |Mostra todos os users            
+|/users/id                | Nenhum                                                            | GET         |Mostra um user específico                         
+|/users/register          | name, username, email, password, userType                         | POST        |Cadastra um user                   
+|/users/login             | email ou username, password                                       | POST        |Loga um user                   
+|/movies                  | Nenhum                                                            | GET         |Mostra "todos" os filmes   
+|/movies/id               | Nenhum                                                            | GET         |Mostra um filme específico
+|/posters/id              | Nenhum                                                            | GET         |Mostra um poster específico 
+|/posters                 | idUser, idMovie, posterPath                                       | POST        |Cadastra um poster novo no banco
+|/posters/id              | idMovie, posterPath                                               | POST        |Atualiza um poster já existente
