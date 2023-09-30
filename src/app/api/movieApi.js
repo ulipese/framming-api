@@ -17,4 +17,4 @@ const callMovieAPI = async (path, language = "pt-BR") => {
   }
 };
 
-module.exports = callMovieAPI;
+module.exports = { callMovieAPI };

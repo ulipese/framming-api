@@ -1,5 +1,5 @@
 const db = require("../../database/index");
-const callMovieAPI = require("../api/movieApi");
+const { callMovieAPI } = require("../api/movieApi");
 
 class MovieRepository {
   async findAll(language) {
@@ -8,9 +8,12 @@ class MovieRepository {
     return movies;
   }
   async findById(id, language) {
-    const movie = (await callMovieAPI(`/movie/${id}`, language)).data;
+    const movie = (await callMovieAPI(`movie/${id}`, language)).data;
     return movie;
   }
+  async create() {}
+  async update() {}
+  async delete() {}
 }
 
 module.exports = new MovieRepository();

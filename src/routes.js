@@ -1,8 +1,9 @@
 const { Router } = require("express");
 
+const auth = require("./app/middlewares/auth");
 const MovieController = require("./app/controllers/MovieController");
 const UserController = require("./app/controllers/UserController");
-const auth = require("./app/middlewares/auth");
+const PosterController = require("./app/controllers/PosterController");
 
 const router = Router();
 
@@ -13,5 +14,8 @@ router.get("/users", UserController.index);
 router.get("/users/:id", UserController.show);
 router.post("/users/register", UserController.store);
 router.post("/users/login", UserController.show);
+router.post("/posters", PosterController.store);
+router.post("/posters/:idUser", PosterController.update);
+router.get("/posters/:idUser", PosterController.show);
 
 module.exports = router;

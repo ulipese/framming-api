@@ -4,26 +4,46 @@ const MovieRepository = require("../repositories/MovieRepository");
 class MovieController {
   async index(request, response) {
     // discover movies
-    if (request.path !== "/movies") {
-      response.redirect("/movies");
-    }
-    const foundMovies = (await MovieRepository.findAll()).results;
+    try {
+      if (request.path !== "/movies") {
+        return response.redirect("/movies");
+      }
+      const foundMovies = (await MovieRepository.findAll()).results;
 
-    response.status(200).json(foundMovies);
+      return response.status(200).json(foundMovies);
+    } catch (err) {
+      console.log(err);
+      return response
+        .status(502)
+        .json("Error: Movies not found, try again later.");
+    }
   }
   async show(request, response) {
-    const { id } = request.params;
-    const movie = await MovieRepository.findById(id);
+    try {
+      const { id } = request.params;
+      const movie = await MovieRepository.findById(id);
 
-    if (!movie.overview) {
-      const englishMovie = await MovieRepository.findById(id, "en-US");
-      const mergedMovie = [movie, (movie.overview = englishMovie.overview)][0];
+      if (!movie.overview) {
+        const englishMovie = await MovieRepository.findById(id, "en-US");
+        const mergedMovie = [
+          movie,
+          (movie.overview = englishMovie.overview),
+        ][0];
 
-      response.status(200).json(mergedMovie);
+        return response.status(200).json(mergedMovie);
+      }
+
+      return response.status(200).json(movie);
+    } catch (err) {
+      console.log(err);
+      return response
+        .status(502)
+        .json("Error: Movie not found, try again later.");
     }
-
-    response.status(200).json(movie);
   }
+  async store(request, response) {}
+  async delete(request, response) {}
+  async update(request, response) {}
 }
 
 module.exports = new MovieController();

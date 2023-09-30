@@ -27,9 +27,9 @@ class UserRepository {
     return user;
   }
   async create(user) {
-
     const createdUser = await db.dbQuery(
-      "INSERT INTO `tbUsuario` (idUsuario, nomeUsuario, nickUsuario, emailUsuario, senhaUsuario, tipoUsuario) VALUES (?, ?, ?, ?, ?, ?)", [
+      "INSERT INTO `tbUsuario` (idUsuario, nomeUsuario, nickUsuario, emailUsuario, senhaUsuario, tipoUsuario) VALUES (?, ?, ?, ?, ?, ?)",
+      [
         `${user.idUsuario}`,
         `${user.nomeUsuario}`,
         `${user.nickUsuario}`,
@@ -39,7 +39,7 @@ class UserRepository {
       ]
     );
 
-    return user;
+    return createdUser;
   }
   async update() {}
   async delete() {}
