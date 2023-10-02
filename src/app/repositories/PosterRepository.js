@@ -4,10 +4,10 @@ class PosterRepository {
   async findAll() {}
   async findById(idUser) {
     const poster = await db.dbQuery(
-      "SELECT linkPoster FROM tbPosterUsuario WHERE idUsuario = ?;",
+      "SELECT * FROM tbPosterUsuario WHERE idUsuario = ?;",
       [idUser]
     );
-    
+
     return poster;
   }
   async create(idUser, idMovie, linkPoster) {
