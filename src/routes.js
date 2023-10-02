@@ -14,8 +14,7 @@ router.get("/users", UserController.index);
 router.get("/users/:id", UserController.show);
 router.post("/users/register", UserController.store);
 router.post("/users/login", UserController.show);
-router.post("/posters", PosterController.store);
-router.post("/posters/:idUser", PosterController.update);
+router.post("/posters/:idUser", PosterController.store);
 router.get("/posters/:idUser", PosterController.show);
 
 module.exports = router;
