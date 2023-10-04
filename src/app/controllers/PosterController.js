@@ -29,7 +29,7 @@ class PosterController {
           .json("Error: All data are necessary to save poster!");
       }
 
-      const [posterExists] = await PosterRepository.findById(idUser);
+      const [posterExists] = await PosterRepository.findById(idUser, idMovie);
 
       if (posterExists) {
         const poster = await PosterRepository.update(

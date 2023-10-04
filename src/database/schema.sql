@@ -1,6 +1,4 @@
-create database dbFramming;
--- drop database dbFramming
-use dbFramming;
+use railway;
 
 -- TABLES
 create table tbGenero (
@@ -8,6 +6,18 @@ create table tbGenero (
     genero varchar(50) not null
 );
 create table tbFilme (
+	idFilme bigint primary key,
+    nomeFilme varchar(200) not null,
+    sinopseFilme varchar(3000),
+    anoFilme varchar(10) not null,
+    duracaoFilme smallint not null,
+    notaFilme decimal(2, 1) not null,
+    qtdVisualizacaoFilme int,
+    situacaoFilme boolean not null,
+    posterFilme varchar(500),
+    fundoImgFilme varchar(500)
+);
+create table tbFilmeNacional (
 	idFilme bigint primary key,
     nomeFilme varchar(200) not null,
     sinopseFilme varchar(3000),
@@ -50,7 +60,6 @@ create table tbPosterUsuario (
 	idFilme bigint not null,
     idUsuario varchar(36) not null,
     linkPoster varchar(500) not null,
-    foreign key (idFilme) references tbFilme(idFilme),
     foreign key (idUsuario) references tbUsuario(idUsuario)
 );
 create table tbFavoritoUsuario (
@@ -198,5 +207,5 @@ DELIMITER //
     end
 //
 
-call spCriarUsuario('36efc959-0425-4e81-8730-463e4f1ab08f', 'Felipe Sousa', 'lip', 'lip@gmail.com', '$2b$10$uF/uWmwRe/WJ5y9BpeHauueC0bNKrQCtfiUVNa1ENwyYtskYh04hW', 'nor'); -- nor / fun / adm
-call spCriarUsuario('8a9be714-c40d-4cbc-98b2-6df9f16ad216', 'Mateus Coripio', 'matcop', 'mat@gmail.com', '$2b$10$hlRAJtuWrlNxqHZA6QqKQOWBG.hkJ.E9EIifmalqzF6e/giFOVjBq', 'adm');
+-- call spCriarUsuario('36efc959-0425-4e81-8730-463e4f1ab08f', 'Felipe Sousa', 'lip', 'lip@gmail.com', '$2b$10$uF/uWmwRe/WJ5y9BpeHauueC0bNKrQCtfiUVNa1ENwyYtskYh04hW', 'nor'); -- nor / fun / adm
+-- call spCriarUsuario('8a9be714-c40d-4cbc-98b2-6df9f16ad216', 'Mateus Coripio', 'matcop', 'mat@gmail.com', '$2b$10$hlRAJtuWrlNxqHZA6QqKQOWBG.hkJ.E9EIifmalqzF6e/giFOVjBq', 'adm');

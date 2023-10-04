@@ -2,10 +2,10 @@ const db = require("../../database/index");
 
 class PosterRepository {
   async findAll() {}
-  async findById(idUser) {
+  async findById(idUser, idMovie) {
     const poster = await db.dbQuery(
-      "SELECT * FROM tbPosterUsuario WHERE idUsuario = ?;",
-      [idUser]
+      "SELECT * FROM tbPosterUsuario WHERE idUsuario = ? and idFilme = ?;",
+      [idUser, idMovie]
     );
 
     return poster;
@@ -19,8 +19,8 @@ class PosterRepository {
   }
   async update(idUser, idMovie, linkPoster) {
     const poster = await db.dbQuery(
-      "UPDATE tbPosterUsuario SET idFilme = ?, linkPoster = ? WHERE idUsuario = ?;",
-      [idMovie, linkPoster, idUser]
+      "UPDATE tbPosterUsuario SET linkPoster = ? WHERE idUsuario = ? and idFilme = ?;",
+      [linkPoster, idUser, idMovie]
     );
     return poster;
   }
