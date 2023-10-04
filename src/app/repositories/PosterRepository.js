@@ -1,7 +1,14 @@
 const db = require("../../database/index");
 
 class PosterRepository {
-  async findAll() {}
+  async findAll(idUser) {
+    const poster = await db.dbQuery(
+      "SELECT * FROM tbPosterUsuario WHERE idUsuario = ?;",
+      [idUser]
+    );
+
+    return poster;
+  }
   async findById(idUser, idMovie) {
     const poster = await db.dbQuery(
       "SELECT * FROM tbPosterUsuario WHERE idUsuario = ? and idFilme = ?;",
