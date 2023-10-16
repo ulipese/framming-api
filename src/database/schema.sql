@@ -1,5 +1,5 @@
-use railway;
-
+create database dbFramming;
+use dbFramming;
 -- TABLES
 create table tbGenero (
 	idGenero int auto_increment primary key,
@@ -37,6 +37,7 @@ create table tbGeneroFilme (
 );
 create table tbUsuario (
 	idUsuario varchar(36) primary key,
+    iconUsuario varchar(500) default 'https://imageupload.io/ib/yzauelSzIISZpoC_1697494770.png',
     nomeUsuario varchar(50) not null,
     nickUsuario varchar(50) unique not null,
     emailUsuario varchar(100) unique not null,
