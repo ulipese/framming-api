@@ -41,7 +41,7 @@ class UserController {
       if (!(await bcrypt.compare(password, user.senhaUsuario))) {
         return response.status(404).json({ Error: "The data are incorrect." });
       }
-      
+
       return response.status(200).json(user);
     } catch (err) {
       console.log(err);
@@ -49,54 +49,46 @@ class UserController {
         .status(502)
         .json("Error: login not working, try again later.");
     }
-
   }
   async store(request, response) {
-    try {
-      const { name, username, email, password, userType } = request.body;
+    const { name, username, email, password, userType } = request.body;
 
-      if (!username || !email || !password) {
-        return response
-          .status(400)
-          .json({ Error: "All the user data are required!" });
-      }
-
-      const [userExists] = await UserRepository.findByEmail(email);
-
-      if (userExists) {
-        return response
-          .status(409)
-          .json({ Error: "User Already Exists. Please Login!" });
-      }
-
-      const encryptedPassword = await bcrypt.hash(password, 10);
-
-      const user = await UserRepository.create({
-        idUsuario: uuid(),
-        nomeUsuario: name.toLowerCase(),
-        nickUsuario: username.toLowerCase(),
-        emailUsuario: email.toLowerCase(),
-        senhaUsuario: encryptedPassword,
-        tipoUsuario: userType,
-      });
-
-      const token = jwt.sign(
-        { user_id: user._id, email },
-        process.env.TOKEN_KEY,
-        {
-          expiresIn: "7d",
-        }
-      );
-
-      user.token = token;
-
-      return response.status(201).json(user); // Objeto user será mandado para o front, com o token jwt
-    } catch (err) {
-      console.log(err);
+    if (!username || !email || !password) {
       return response
-        .status(502)
-        .json("Error: register not working, try again later.");
+        .status(400)
+        .json({ Error: "All the user data are required!" });
     }
+
+    const [userExists] = await UserRepository.findByEmail(email);
+
+    if (userExists) {
+      return response
+        .status(409)
+        .json({ Error: "User Already Exists. Please Login!" });
+    }
+
+    const encryptedPassword = await bcrypt.hash(password, 10);
+
+    const user = await UserRepository.create({
+      idUsuario: uuid(),
+      nomeUsuario: name.toLowerCase(),
+      nickUsuario: username.toLowerCase(),
+      emailUsuario: email.toLowerCase(),
+      senhaUsuario: encryptedPassword,
+      tipoUsuario: userType,
+    });
+
+    const token = jwt.sign(
+      { user_id: user._id, email },
+      process.env.TOKEN_KEY,
+      {
+        expiresIn: "7d",
+      }
+    );
+
+    user.token = token;
+
+    return response.status(201).json({ Success: "User was created" }); // Objeto user será mandado para o front, com o token jwt
   }
   async update(request, response) {}
   async delete(request, response) {}
