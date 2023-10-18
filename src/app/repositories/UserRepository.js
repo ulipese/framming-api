@@ -35,7 +35,7 @@ class UserRepository {
         `${user.nickUsuario}`,
         `${user.emailUsuario}`,
         `${user.senhaUsuario}`,
-        `${user.tipoUsuario}`,
+        `${user.tipoUsuario = "nor"}`,
       ]
     );
 
