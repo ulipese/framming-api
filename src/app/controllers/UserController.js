@@ -52,7 +52,7 @@ class UserController {
     if (userExists) {
       return response
         .status(409)
-        .json({ Error: "User Already Exists. Please Login!" });
+        .json({ Error: "User Already Exists. Try Login!" });
     }
 
     const encryptedPassword = await bcrypt.hash(password, 10);
@@ -76,7 +76,7 @@ class UserController {
 
     user.token = token;
 
-    return response.status(201).json({ Success: "User was created" }); // Objeto user será mandado para o front, com o token jwt
+    return response.status(200).json({ Success: "User was created" }); // Objeto user será mandado para o front, com o token jwt
   }
   async update(request, response) {}
   async delete(request, response) {}
