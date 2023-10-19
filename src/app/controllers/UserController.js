@@ -3,6 +3,18 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { v4: uuid } = require("uuid");
 
+const formatName = async (name) => {
+  return name
+    .split(" ")
+    .map((word) => {
+      return word.length >= 3 &&
+        word !== ("de" || "do" || "da" || "dos" || "das")
+        ? word[0].toUpperCase() + word.substring(1)
+        : word;
+    })
+    .join(" ");
+};
+
 class UserController {
   async index(request, response) {
     const users = await UserRepository.findAll();
@@ -20,6 +32,8 @@ class UserController {
         return response.status(404).json({ Error: "User not exists." });
       }
 
+      user.nomeUsuario = await formatName(user.nomeUsuario);
+
       return response.status(200).json(user);
     }
 
@@ -35,6 +49,8 @@ class UserController {
     if (!(await bcrypt.compare(password, user.senhaUsuario))) {
       return response.status(404).json({ Error: "User data is incorrect." });
     }
+
+    user.nomeUsuario = await formatName(user.nomeUsuario);
 
     return response.status(200).json(user);
   }
@@ -67,7 +83,7 @@ class UserController {
     });
 
     const token = jwt.sign(
-      { user_id: user._id, email },
+      { userId: user.idUsuario, userEmail: user.emailUsuario },
       process.env.TOKEN_KEY,
       {
         expiresIn: "7d",
@@ -76,7 +92,9 @@ class UserController {
 
     user.token = token;
 
-    return response.status(200).json({ Success: "User was created" }); // Objeto user será mandado para o front, com o token jwt
+    user.nomeUsuario = await formatName(user.nomeUsuario);
+
+    return response.status(201).json({ user }); // Objeto user será mandado para o front, com o token jwt
   }
   async update(request, response) {}
   async delete(request, response) {}
