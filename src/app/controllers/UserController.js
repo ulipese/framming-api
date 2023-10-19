@@ -1,13 +1,14 @@
 const UserRepository = require("../repositories/UserRepository");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const auth = require("../auth/auth");
 const { v4: uuid } = require("uuid");
 
 const formatName = async (name) => {
-  return name
+  return await name
     .split(" ")
     .map((word) => {
-      return word.length >= 3 &&
+      return word.length > 3 &&
         word !== ("de" || "do" || "da" || "dos" || "das")
         ? word[0].toUpperCase() + word.substring(1)
         : word;
@@ -32,12 +33,22 @@ class UserController {
         return response.status(404).json({ Error: "User not exists." });
       }
 
-      user.nomeUsuario = await formatName(user.nomeUsuario);
-
       return response.status(200).json(user);
     }
 
-    const { username, email, password } = await request.body;
+    const { token } = request.body;
+
+    if (token) {
+      const user = await auth(token);
+      if (user) {
+        return response.status(200).json(user);
+      }
+      if (!user || false) {
+        return response.status(400).json({ Error: "Invalid token" });
+      }
+    }
+
+    const { username, email, password } = request.body;
 
     const [user] = username
       ? await UserRepository.findByUsername(username)
@@ -49,8 +60,6 @@ class UserController {
     if (!(await bcrypt.compare(password, user.senhaUsuario))) {
       return response.status(404).json({ Error: "User data is incorrect." });
     }
-
-    user.nomeUsuario = await formatName(user.nomeUsuario);
 
     return response.status(200).json(user);
   }
@@ -73,9 +82,9 @@ class UserController {
 
     const encryptedPassword = await bcrypt.hash(password, 10);
 
-    const user = await UserRepository.create({
+    const createdUser = await UserRepository.create({
       idUsuario: uuid(),
-      nomeUsuario: name.toLowerCase(),
+      nomeUsuario: await formatName(name.toLowerCase()),
       nickUsuario: username.toLowerCase(),
       emailUsuario: email.toLowerCase(),
       senhaUsuario: encryptedPassword,
@@ -83,18 +92,17 @@ class UserController {
     });
 
     const token = jwt.sign(
-      { userId: user.idUsuario, userEmail: user.emailUsuario },
+      { userId: createdUser.idUsuario, userEmail: createdUser.emailUsuario },
       process.env.TOKEN_KEY,
       {
         expiresIn: "7d",
       }
     );
 
-    user.token = token;
-
-    user.nomeUsuario = await formatName(user.nomeUsuario);
-
-    return response.status(201).json({ user }); // Objeto user será mandado para o front, com o token jwt
+    if (createdUser) {
+      const [user] = await UserRepository.findByEmail(email);
+      return response.status(201).json({ ...user, token: token });
+    }
   }
   async update(request, response) {}
   async delete(request, response) {}

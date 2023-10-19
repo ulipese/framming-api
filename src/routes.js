@@ -1,6 +1,5 @@
 const { Router } = require("express");
 
-const auth = require("./app/middlewares/auth");
 const MovieController = require("./app/controllers/MovieController");
 const UserController = require("./app/controllers/UserController");
 const PosterController = require("./app/controllers/PosterController");
