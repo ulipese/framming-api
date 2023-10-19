@@ -1,5 +1,7 @@
 create database dbFramming;
 use dbFramming;
+-- drop database dbFramming;
+
 -- TABLES
 create table tbGenero (
 	idGenero int auto_increment primary key,
@@ -196,7 +198,8 @@ DELIMITER //
 			if not exists (select * from tbUsuario where emailUsuario = vEmailUsuario) then
 				if not exists (select * from tbUsuario where nickUsuario = vNickUsuario) then
 					insert into tbUsuario (idUsuario, nomeUsuario, nickUsuario, emailUsuario, senhaUsuario, tipoUsuario) values (vIdUsuario, vNomeUsuario, vNickUsuario, vEmailUsuario, vSenhaUsuario, vTipoUsuario);
-				else
+					select * from tbUsuario where idUsuario = vIdUsuario;
+                else
 					select 'Nick de usuário já cadastrado';
 				end if;
 			else
@@ -208,5 +211,5 @@ DELIMITER //
     end
 //
 
--- call spCriarUsuario('36efc959-0425-4e81-8730-463e4f1ab08f', 'Felipe Sousa', 'lip', 'lip@gmail.com', '$2b$10$uF/uWmwRe/WJ5y9BpeHauueC0bNKrQCtfiUVNa1ENwyYtskYh04hW', 'nor'); -- nor / fun / adm
+-- call spCriarUsuario('36efc959-0425-4e81-8730-463e4f1ab09f', 'Felipe Sousa', 'lipe', 'lipe@gmail.com', '$2b$10$uF/uWmwRe/WJ5y9BpeHauueC0bNKrQCtfiUVNa1ENwyYtskYh04hW', 'nor'); -- nor / fun / adm
 -- call spCriarUsuario('8a9be714-c40d-4cbc-98b2-6df9f16ad216', 'Mateus Coripio', 'matcop', 'mat@gmail.com', '$2b$10$hlRAJtuWrlNxqHZA6QqKQOWBG.hkJ.E9EIifmalqzF6e/giFOVjBq', 'adm');

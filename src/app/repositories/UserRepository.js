@@ -28,7 +28,7 @@ class UserRepository {
   }
   async create(user) {
     const createdUser = await db.dbQuery(
-      "INSERT INTO `tbUsuario` (idUsuario, nomeUsuario, nickUsuario, emailUsuario, senhaUsuario, tipoUsuario) VALUES (?, ?, ?, ?, ?, ?)",
+      "call spCriarUsuario(?, ?, ?, ?, ?, ?)",
       [
         `${user.idUsuario}`,
         `${user.nomeUsuario}`,
@@ -39,7 +39,7 @@ class UserRepository {
       ]
     );
 
-    return createdUser;
+    return createdUser[0];
   }
   async update() {}
   async delete() {}

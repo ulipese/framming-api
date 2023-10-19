@@ -82,7 +82,7 @@ class UserController {
 
     const encryptedPassword = await bcrypt.hash(password, 10);
 
-    const createdUser = await UserRepository.create({
+    const [createdUser] = await UserRepository.create({
       idUsuario: uuid(),
       nomeUsuario: await formatName(name.toLowerCase()),
       nickUsuario: username.toLowerCase(),
@@ -100,9 +100,11 @@ class UserController {
     );
 
     if (createdUser) {
-      const [user] = await UserRepository.findByEmail(email);
-      return response.status(201).json({ ...user, token: token });
+      return response.status(201).json({ ...createdUser, token: token });
     }
+    return response
+      .status(502)
+      .json({ Error: "User not created, try again later" });
   }
   async update(request, response) {}
   async delete(request, response) {}
