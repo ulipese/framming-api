@@ -9,6 +9,8 @@ const router = Router();
 router.get("/", MovieController.index);
 router.get("/movies", MovieController.index);
 router.get("/movies/:id", MovieController.show);
+router.get("/nationalMovies", MovieController.index);
+router.get("/nationalMovies/:id", MovieController.show);
 router.get("/users", UserController.index);
 router.get("/users/:id", UserController.show);
 router.post("/users/register", UserController.store);

@@ -4,18 +4,31 @@ const MovieRepository = require("../repositories/MovieRepository");
 class MovieController {
   async index(request, response) {
     // discover movies
+    if (request.path === "/nationalMovies") {
+      const foundNationalMovies = await MovieRepository.findAll(null, true);
+      return response.status(200).json(foundNationalMovies);
+    }
 
     if (request.path !== "/movies") {
       return response.redirect("/movies");
     }
+
     const foundMovies = (await MovieRepository.findAll()).results;
 
     return response.status(200).json(foundMovies);
   }
   async show(request, response) {
     const { id } = request.params;
+    console.log(request.path);
+    if (request.path.substring(0, 7) !== "/movies") {
+      const [foundNationalMovie] = await MovieRepository.findById(
+        id,
+        null,
+        true
+      );
+      return response.status(200).json(foundNationalMovie);
+    }
     const movie = await MovieRepository.findById(id);
-
     if (!movie) {
       return response.status(404).json({ Error: "Movie not found" });
     }
@@ -29,7 +42,33 @@ class MovieController {
 
     return response.status(200).json(movie);
   }
-  async store(request, response) {}
+  async store(request, response) {
+    // // salvar os filmes dos cinemas
+    // const {} = request.body;
+
+    // if ("") {
+    //   return response
+    //     .status(400)
+    //     .json({ Error: "All the movie data are required!" });
+    // }
+
+    // const [movieExists] = await MovieRepository.findByEmail(email);
+
+    // if (movieExists) {
+    //   return response
+    //     .status(200)
+    //     .json({ Error: "The movie data are updated!" });
+    // }
+
+    // const [createdMovie] = await MovieRepository.create({});
+
+    // if (createdMovie) {
+    //   return response.status(201).json({ createdMovie });
+    // }
+    // return response
+    //   .status(502)
+    //   .json({ Error: "Movie not saved, try again later" });
+  }
   async delete(request, response) {}
   async update(request, response) {}
 }
