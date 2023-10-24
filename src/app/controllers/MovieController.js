@@ -13,7 +13,7 @@ class MovieController {
       return response.redirect("/movies");
     }
 
-    const foundMovies = (await MovieRepository.findAll()).results;
+    const foundMovies = await MovieRepository.findAll();
 
     return response.status(200).json(foundMovies);
   }

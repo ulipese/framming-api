@@ -4,7 +4,7 @@ const { callMovieAPI } = require("../api/movieApi");
 class MovieRepository {
   async findAll(language, isNational) {
     if (!isNational || isNational === "" || isNational === null) {
-      const movies = (await callMovieAPI("discover/movie", language)).data;
+      const movies = await (await callMovieAPI("discover/movie", language)).data;
       return movies;
     }
 
