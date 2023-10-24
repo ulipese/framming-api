@@ -6,6 +6,8 @@ const callMovieAPI = async (path, language = "pt-BR") => {
     const request = await axios({
       method: "get",
       url: `https://api.themoviedb.org/3/${path}`,
+      timeout: 60000, //optional
+      httpsAgent: new https.Agent({ keepAlive: true }),
       params: {
         api_key: process.env.API_KEY,
         language: language,
