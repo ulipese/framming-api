@@ -1,5 +1,6 @@
 require("dotenv").config({ path: __dirname + "/./../../../.env" });
 const axios = require("axios").default;
+const https = require("https");
 
 const callMovieAPI = async (path, language = "pt-BR") => {
   try {
