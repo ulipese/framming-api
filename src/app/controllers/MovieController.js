@@ -19,7 +19,7 @@ class MovieController {
   }
   async show(request, response) {
     const { id } = request.params;
-    console.log(request.path);
+ 
     if (request.path.substring(0, 7) !== "/movies") {
       const [foundNationalMovie] = await MovieRepository.findById(
         id,
@@ -28,6 +28,7 @@ class MovieController {
       );
       return response.status(200).json(foundNationalMovie);
     }
+
     const movie = await MovieRepository.findById(id);
     if (!movie) {
       return response.status(404).json({ Error: "Movie not found" });
