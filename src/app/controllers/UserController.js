@@ -83,9 +83,9 @@ class UserController {
 
     const encryptedPassword = await bcrypt.hash(password, 10);
 
-    if (icon) {
-      const apiRes = callIconAPI();
-    }
+    // if (icon) {
+    //   const apiRes = callIconAPI();
+    // }
 
     const [createdUser] = await UserRepository.create({
       idUsuario: uuid(),
