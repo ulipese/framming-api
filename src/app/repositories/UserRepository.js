@@ -28,9 +28,10 @@ class UserRepository {
   }
   async create(user) {
     const createdUser = await db.dbQuery(
-      "call spCriarUsuario(?, ?, ?, ?, ?, ?)",
+      "call spCriarUsuario(?, ?, ?, ?, ?, ?, ?)",
       [
         `${user.idUsuario}`,
+        `${user.iconUsuario}`,
         `${user.nomeUsuario}`,
         `${user.nickUsuario}`,
         `${user.emailUsuario}`,

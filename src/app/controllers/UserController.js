@@ -1,6 +1,7 @@
 const UserRepository = require("../repositories/UserRepository");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const { callIconAPI } = require("../api/iconApi");
 const auth = require("../auth/auth");
 const { v4: uuid } = require("uuid");
 
@@ -64,7 +65,7 @@ class UserController {
     return response.status(200).json(user);
   }
   async store(request, response) {
-    const { name, username, email, password, userType } = request.body;
+    const { name, icon, username, email, password, userType } = request.body;
 
     if (!username || !email || !password) {
       return response
@@ -82,8 +83,13 @@ class UserController {
 
     const encryptedPassword = await bcrypt.hash(password, 10);
 
+    if (icon) {
+      const apiRes = callIconAPI();
+    }
+
     const [createdUser] = await UserRepository.create({
       idUsuario: uuid(),
+      iconUsuario: icon,
       nomeUsuario: await formatName(name.toLowerCase()),
       nickUsuario: username.toLowerCase(),
       emailUsuario: email.toLowerCase(),
