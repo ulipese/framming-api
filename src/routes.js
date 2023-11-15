@@ -22,9 +22,6 @@ router.get("/posters/:idUser/:idMovie", PosterController.show);
 router.get("/feedback/:idUser", FeedbackController.index);
 router.get("/feedback/:idUser/:idFeedback", FeedbackController.show);
 router.post("/feedback/:idUser", FeedbackController.store);
-router.post(
-  "/feedback/:idUser/:idCreator/:idFeedback",
-  FeedbackController.store
-);
+router.post("/feedback/:idUser/:idFeedback", FeedbackController.store);
 
 module.exports = router;

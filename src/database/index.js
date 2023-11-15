@@ -6,7 +6,7 @@ exports.dbQuery = async function dbQuery(query, values) {
     host: process.env.DBHOST,
     user: process.env.DBUSER,
     database: process.env.DBNAME,
-    password: process.env.DBPASSWORD
+    password: process.env.DBPASSWORD,
   });
   // query database
   const [rows] = await connection.execute(query, values);
@@ -17,5 +17,4 @@ exports.dbQuery = async function dbQuery(query, values) {
 //   ["Adriel"]
 // );
 
-// this.dbQuery("INSERT INTO tbTeste VALUES (?, ?)", [1, 'Felipe'])
 // this.dbQuery("SELECT * FROM tbTeste WHERE id = ?", [1])

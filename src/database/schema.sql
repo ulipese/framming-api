@@ -9,27 +9,10 @@ create table tbGenero (
 );
 create table tbFilme (
 	idFilme bigint primary key,
-    nomeFilme varchar(200) not null,
-    sinopseFilme varchar(3000),
-    anoFilme varchar(10) not null,
-    duracaoFilme smallint not null,
     notaFilme decimal(2, 1) not null,
     qtdVisualizacaoFilme int,
-    situacaoFilme boolean not null,
-    posterFilme varchar(500),
-    fundoImgFilme varchar(500)
-);
-create table tbFilmeNacional (
-	idFilme bigint primary key,
-    nomeFilme varchar(200) not null,
-    sinopseFilme varchar(3000),
-    anoFilme varchar(10) not null,
-    duracaoFilme smallint not null,
-    notaFilme decimal(2, 1) not null,
-    qtdVisualizacaoFilme int,
-    situacaoFilme boolean not null,
-    posterFilme varchar(500),
-    fundoImgFilme varchar(500)
+    situacaoFilme boolean default 0,
+    filmeNacional boolean default 0
 );
 create table tbGeneroFilme (
 	idGenero int not null,
@@ -109,15 +92,16 @@ create table tbCritica (
     textoCritica varchar(400) not null,
     notaCritica double not null,
     dataCritica varchar(10) not null,
-    qtdCurtidaCritica int default 0,
-    foreign key (idFilme) references tbFilme(idFilme),
+    qtdCurtidaCritica int,
     foreign key (idUsuario) references tbUsuario(idUsuario)
 );
 create table tbCurtidaCritica (
 	idCritica int not null,
     idUsuario varchar(36) not null,
+    idCriador varchar(36) not null,
     foreign key (idCritica) references tbCritica(idCritica),
-    foreign key (idUsuario) references tbUsuario(idUsuario)
+    foreign key (idUsuario) references tbUsuario(idUsuario),
+    foreign key (idCriador) references tbUsuario(idUsuario)
 );
 create table tbDiarioUsuario (
 	idUsuario varchar(36) not null,
@@ -215,4 +199,31 @@ DELIMITER //
 -- call spCriarUsuario('36efc959-0425-4e81-8730-463e4f1ab09f', 'Felipe Sousa', 'lipe', 'lipe@gmail.com', '$2b$10$uF/uWmwRe/WJ5y9BpeHauueC0bNKrQCtfiUVNa1ENwyYtskYh04hW', 'nor'); -- nor / fun / adm
 -- call spCriarUsuario('8a9be714-c40d-4cbc-98b2-6df9f16ad216', 'Mateus Coripio', 'matcop', 'mat@gmail.com', '$2b$10$hlRAJtuWrlNxqHZA6QqKQOWBG.hkJ.E9EIifmalqzF6e/giFOVjBq', 'adm');
 
-insert into tbFilmeNacional values (7347, "Tropa de Elite", "Rio de Janeiro, 1997. Nascimento, capitão da Tropa de Elite do Rio de Janeiro, é designado para chefiar uma das equipes que tem como missão 'apaziguar' o Morro do Turano por um motivo que ele considera insensato. Mas ele tem que cumprir as ordens enquanto procura por um substituto. Sua mulher, Rosane, está no final da gravidez e todos os dias lhe pede para sair da linha de frente do batalhão. Pressionado, o capitão sente os efeitos do estresse.Neste clima, é chamado para mais uma emergência num morro. Em meio a um tiroteio em um baile funk, Nascimento e sua equipe têm que resgatar dois aspirantes a oficiais da PM: Neto e Matias. Ansiosos por entrar em ação e impressionados com a eficiência de seus salvadores, os dois se candidatam ao curso de formação da Tropa de Elite.", "2007-10-12", 115, 8, 24495, false, "/yMiTQXAHJdZIWb56UGXVqbtZ75d.jpg", "/tGb044NgQYQJr58fta5O3OB6SpQ.jpg")
+# drop procedure spCurtidaCritica
+DELIMITER //
+	create procedure spCurtidaCritica(vIdUsuario varchar(36), vIdCriador varchar(36), vIdCritica int)
+	begin
+		if not exists (select * from tbUsuario where idUsuario = vIdUsuario) or not exists (select * from tbUsuario where idUsuario = vIdCriador) then
+			select 'Usuário ou criador não existem';
+		else
+			if not exists (select * from tbCritica where idUsuario = vIdCriador and idCritica = vIdCritica) then
+				select "Critica não existe";
+			else
+                if not exists (select * from tbCurtidaCritica where idCritica = vIdCritica and idCriador = vIdCriador and idUsuario = vIdUsuario) then
+					update tbCritica set qtdCurtidaCritica = ((select qtdCurtidaCritica where idUsuario = vIdCriador and idCritica = vIdCritica) + 1) where idUsuario = vIdCriador and idCritica = vIdCritica;
+					insert into tbCurtidaCritica values (vIdCritica, vIdUsuario, vIdCriador);
+                    select * from tbCritica where idUsuario = vIdUsuario and idCritica = vIdCritica;
+				else 
+					update tbCritica set qtdCurtidaCritica = ((select qtdCurtidaCritica where idUsuario = vIdCriador and idCritica = vIdCritica) - 1) where idUsuario = vIdCriador and idCritica = vIdCritica;
+					delete from tbCurtidaCritica where idCritica = vIdCritica and idUsuario = vIdUsuario and idCriador = vIdCriador;
+                    select * from tbCritica where idUsuario = vIdUsuario and idCritica = vIdCritica;
+				end if;
+            end if;    
+		end if;
+    end
+//
+-- call spCurtidaCritica('0fed1bdf-5e99-48cc-841f-7e04bdcf4e3a', '1421d23b-41e0-4c72-8e97-8cfbef7ce1e2', 1);
+update tbCritica set qtdCurtidaCritica = ((select qtdCurtidaCritica where idUsuario = '1421d23b-41e0-4c72-8e97-8cfbef7ce1e2' and idCritica = 1) +1) where idUsuario = '1421d23b-41e0-4c72-8e97-8cfbef7ce1e2';
+select * from tbCurtidaCritica;
+select * from tbCritica where idUsuario = '1421d23b-41e0-4c72-8e97-8cfbef7ce1e2';
+-- insert into tbFilme values (34196, 4.5, 2, 0, 1)

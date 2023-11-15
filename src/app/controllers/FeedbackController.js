@@ -2,7 +2,8 @@ const FeedbackRepository = require("../repositories/FeedbackRepository");
 
 class FeedbackController {
   async index(request, response) {
-    const feedbacks = await FeedbackRepository.findAll();
+    const { idUser } = request.params;
+    const feedbacks = await FeedbackRepository.findAll(idUser);
     if (!feedbacks) {
       return response.status(404).json({ Error: "Feedbacks not found" });
     }
@@ -20,54 +21,60 @@ class FeedbackController {
     return response.status(200).json(feedback);
   }
   async store(request, response) {
-    const { name, icon, username, email, password, userType } = request.body;
+    const { idUser, idFeedback } = request.params;
+    const { idMovie, feedbackText, feedbackRate, feedbackDate } = request.body;
+    const { idCreator } = request.body;
 
-    if (!username || !email || !password) {
+    if (idCreator && idFeedback) {
+      await FeedbackRepository.update(idUser, idCreator, idFeedback);
+      const [feedback] = await FeedbackRepository.findById(
+        idCreator,
+        idFeedback
+      );
+
+      return response.status(200).json(feedback);
+    }
+
+    if (!idMovie || !feedbackText || !feedbackRate || !feedbackDate) {
       return response
         .status(400)
-        .json({ Error: "All the user data are required!" });
+        .json({ Error: "All the feedback data are required!" });
     }
 
-    const [userExists] = await FeedbackRepository.findByEmail(email);
+    const [feedback] = await FeedbackRepository.findById(idUser, "", idMovie);
 
-    if (userExists) {
-      return response
-        .status(409)
-        .json({ Error: "User Already Exists. Try Login!" });
+    if (feedback) {
+      await FeedbackRepository.update(
+        idUser,
+        "",
+        "",
+        idMovie,
+        feedbackText,
+        feedbackRate,
+        feedbackDate
+      );
+
+      const [feedback] = await FeedbackRepository.findById(idUser, "", idMovie);
+
+      return response.status(200).json(feedback);
     }
 
-    const encryptedPassword = await bcrypt.hash(password, 10);
-
-    if (icon) {
-      const apiRes = callIconAPI();
-    }
-
-    const [createdUser] = await FeedbackRepository.create({
-      idUsuario: uuid(),
-      iconUsuario: "",
-      nomeUsuario: await formatName(name.toLowerCase()),
-      nickUsuario: username.toLowerCase(),
-      emailUsuario: email.toLowerCase(),
-      senhaUsuario: encryptedPassword,
-      tipoUsuario: userType,
-    });
-
-    const token = jwt.sign(
-      { userId: createdUser.idUsuario, userEmail: createdUser.emailUsuario },
-      process.env.TOKEN_KEY,
-      {
-        expiresIn: "7d",
-      }
+    const createdFeedback = await FeedbackRepository.create(
+      idUser,
+      idMovie,
+      feedbackText,
+      feedbackRate,
+      feedbackDate
     );
 
-    if (createdUser) {
-      return response.status(201).json({ ...createdUser, token: token });
+    if (createdFeedback) {
+      const [feedback] = await FeedbackRepository.findById(idUser, "", idMovie);
+      return response.status(201).json(feedback);
     }
     return response
       .status(502)
-      .json({ Error: "User not created, try again later" });
+      .json({ Error: "Feedback not created, try again later" });
   }
-  async update(request, response) {}
   async delete(request, response) {}
 }
 
