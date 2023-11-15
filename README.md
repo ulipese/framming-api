@@ -18,3 +18,7 @@ https://https://framming-api.onrender.com/
 |/posters/idUser          | Nenhum                                                            | GET         |Mostra todos os posters do usuário
 |/posters/idUser/idMovie  | Nenhum                                                            | GET         |Mostra um poster específico do usuário
 |/posters/idUser          | idMovie, posterPath                                               | POST        |Cria/Atualiza um poster do usuário
+|/feedback/idUser         | idMovie, feedbackText, feedbackRate, feedbackDate                 | POST        |Cria/Atualiza uma crítica do usuário
+|/feedback/idUser/idCritica| idCreator                                                        | POST        |Curte/Descurte alguma crítica de outro usuário (criador)
+|/feedback/idUser/idCritica| Nenhum                                                           | GET         |Mostra uma crítica específica do usuário
+|/feedback/idUser          | Nenhum                                                           | GET         |Mostra todas as crítica daquele usuário
