@@ -27,7 +27,9 @@ class MovieRepository {
           console.log(`error: ${completeMovie}`);
         }
       })
-    );
+    ).catch((err) => {
+      console.log(err);
+    });
   }
   async findById(id, language, isNational) {
     if (!isNational) {
@@ -53,7 +55,9 @@ class MovieRepository {
           console.log(`error: ${completeMovie}`);
         }
       })
-    );
+    ).catch((err) => {
+      console.log(err);
+    });
   }
   async create() {}
   async update() {}
