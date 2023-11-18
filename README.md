@@ -21,4 +21,7 @@ https://https://framming-api.onrender.com/
 |/feedback/idUser         | idMovie, feedbackText, feedbackRate, feedbackDate                 | POST        |Cria/Atualiza uma crítica do usuário
 |/feedback/idUser/idCritica| idCreator                                                        | POST        |Curte/Descurte alguma crítica de outro usuário (criador)
 |/feedback/idUser/idCritica| Nenhum                                                           | GET         |Mostra uma crítica específica do usuário
-|/feedback/idUser          | Nenhum                                                           | GET         |Mostra todas as crítica daquele usuário
+|/feedback/idUser (ou idMovie)| Nenhum                                                        | GET         |Mostra todas as crítica daquele usuário, ou, daquele filme
+|/feedback/best-rated | Nenhum                                                                | GET         |Mostra as crítica mais curtidas do app
+|/feedbackMovie/:idUser/:idMovie | Nenhum                                                     | GET         |Mostra todas as crítica que o usuário fez daquele filme
+
