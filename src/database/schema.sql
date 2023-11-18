@@ -89,12 +89,13 @@ create table tbCritica (
 	idCritica int auto_increment primary key,
     idFilme bigint not null,
     idUsuario varchar(36) not null,
-    textoCritica varchar(400) not null,
+    textoCritica varchar(400),
     notaCritica double not null,
-    dataCritica varchar(10) not null,
+    dataCritica date not null,
     qtdCurtidaCritica int,
     foreign key (idUsuario) references tbUsuario(idUsuario)
 );
+
 create table tbCurtidaCritica (
 	idCritica int not null,
     idUsuario varchar(36) not null,
@@ -225,5 +226,22 @@ DELIMITER //
 -- call spCurtidaCritica('0fed1bdf-5e99-48cc-841f-7e04bdcf4e3a', '1421d23b-41e0-4c72-8e97-8cfbef7ce1e2', 1);
 update tbCritica set qtdCurtidaCritica = ((select qtdCurtidaCritica where idUsuario = '1421d23b-41e0-4c72-8e97-8cfbef7ce1e2' and idCritica = 1) +1) where idUsuario = '1421d23b-41e0-4c72-8e97-8cfbef7ce1e2';
 select * from tbCurtidaCritica;
-select * from tbCritica where idUsuario = '1421d23b-41e0-4c72-8e97-8cfbef7ce1e2';
+select * from tbCritica;
+# drop procedure spInsertCritica
+DELIMITER //
+	create procedure spInsertCritica(vIdUsuario varchar(36), vIdFilme bigint, vTextoCritica varchar(400), vNotaCritica double, vDataCritica date)
+	begin
+		INSERT INTO tbCritica (idFilme, idUsuario, textoCritica, notaCritica, dataCritica) VALUES (vIdFilme, vIdUsuario, vTextoCritica, vNotaCritica, vDataCritica);
+        set @mediaFilme = (select floor((select avg(notaCritica) from tbCritica where idFilme = vIdFilme)));
+        set @qtdVisu = (select count(idFilme) from tbCritica where idFilme = vIdFilme);
+        
+        if not exists (select * from tbFilme where idFilme = vIdFilme) then
+			insert into tbFilme (idFilme, notaFilme, qtdVisualizacaoFilme) values (vIdFilme, @mediaFilme, @qtdVisu);
+		else
+			update tbFilme set notaFilme = @mediaFilme, qtdVisualizacaoFilme = @qtdVisu where idFilme = vIdFilme;
+        end if;
+    end
+//
+
+-- call spInsertCritica('1421d23b-41e0-4c72-8e97-8cfbef7ce1e2', 507061, 'RUIM DMAIS', 0.5, '2023-11-17');
 -- insert into tbFilme values (34196, 4.5, 2, 0, 1)

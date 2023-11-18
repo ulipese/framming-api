@@ -7,6 +7,7 @@ exports.dbQuery = async function dbQuery(query, values) {
     user: process.env.DBUSER,
     database: process.env.DBNAME,
     password: process.env.DBPASSWORD,
+    dateStrings: "date",
   });
   // query database
   const [rows] = await connection.execute(query, values);

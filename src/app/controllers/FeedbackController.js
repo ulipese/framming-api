@@ -2,8 +2,28 @@ const FeedbackRepository = require("../repositories/FeedbackRepository");
 
 class FeedbackController {
   async index(request, response) {
-    const { idUser } = request.params;
-    const feedbacks = await FeedbackRepository.findAll(idUser);
+    if (request.path.substring(0, 14) === "/feedbackMovie") {
+      const { idUser, idMovie } = request.params;
+
+      const feedbacks = await FeedbackRepository.findAll(
+        idUser,
+        false,
+        idMovie
+      );
+      return response.status(200).json(feedbacks);
+    }
+
+    const { id } = request.params;
+
+    if (request.path.substring(9, 20) === "/best-rated") {
+      const feedbacks = await FeedbackRepository.findAll(id, true);
+      return response.status(200).json(feedbacks);
+    }
+    if (id.length < 36) {
+      const feedbacks = await FeedbackRepository.findAll(null, false, id);
+      return response.status(200).json(feedbacks);
+    }
+    const feedbacks = await FeedbackRepository.findAll(id, false);
     if (!feedbacks) {
       return response.status(404).json({ Error: "Feedbacks not found" });
     }
@@ -35,7 +55,7 @@ class FeedbackController {
       return response.status(200).json(feedback);
     }
 
-    if (!idMovie || !feedbackText || !feedbackRate || !feedbackDate) {
+    if (!idMovie || !feedbackRate || !feedbackDate) {
       return response
         .status(400)
         .json({ Error: "All the feedback data are required!" });
@@ -43,11 +63,11 @@ class FeedbackController {
 
     const [feedback] = await FeedbackRepository.findById(idUser, "", idMovie);
 
-    if (feedback) {
+    if (feedback && idFeedback) {
       await FeedbackRepository.update(
         idUser,
         "",
-        "",
+        idFeedback,
         idMovie,
         feedbackText,
         feedbackRate,
@@ -68,8 +88,8 @@ class FeedbackController {
     );
 
     if (createdFeedback) {
-      const [feedback] = await FeedbackRepository.findById(idUser, "", idMovie);
-      return response.status(201).json(feedback);
+      // const [feedback] = await FeedbackRepository.findById(idUser, null, idMovie);
+      return response.status(201).json("The feedback was sent!");
     }
     return response
       .status(502)

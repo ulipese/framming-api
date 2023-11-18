@@ -19,8 +19,10 @@ router.post("/users/login", UserController.show);
 router.post("/posters/:idUser", PosterController.store);
 router.get("/posters/:idUser", PosterController.index);
 router.get("/posters/:idUser/:idMovie", PosterController.show);
-router.get("/feedback/:idUser", FeedbackController.index);
+router.get("/feedback/:id", FeedbackController.index);
+router.get("/feedback/best-rated", FeedbackController.index);
 router.get("/feedback/:idUser/:idFeedback", FeedbackController.show);
+router.get("/feedbackMovie/:idUser/:idMovie", FeedbackController.index);
 router.post("/feedback/:idUser", FeedbackController.store);
 router.post("/feedback/:idUser/:idFeedback", FeedbackController.store);
 

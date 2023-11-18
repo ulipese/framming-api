@@ -1,7 +1,30 @@
 const db = require("../../database/index");
 
 class FeedbackRepository {
-  async findAll(idUser) {
+  async findAll(idUser, bestRated, idMovie) {
+    if (!idUser && idMovie) {
+      const feedbacks = await db.dbQuery(
+        "SELECT * FROM tbCritica WHERE idFilme = ?;",
+        [idMovie]
+      );
+
+      return feedbacks;
+    }
+    if (bestRated) {
+      const feedbacks = await db.dbQuery(
+        "SELECT * FROM tbCritica order by qtdCurtidaCritica desc limit 10;"
+      );
+
+      return feedbacks;
+    }
+    if (idUser && idMovie) {
+      const feedbacks = await db.dbQuery(
+        "SELECT * FROM tbCritica WHERE idFilme = ? and idUsuario = ?;",
+        [idMovie, idUser]
+      );
+
+      return feedbacks;
+    }
     const feedbacks = await db.dbQuery(
       "SELECT * FROM tbCritica WHERE idUsuario = ?;",
       [idUser]
@@ -25,11 +48,14 @@ class FeedbackRepository {
 
     return feedback;
   }
-  async create(idUser, idMovie, feedbackText, feedbackRate, feedbackDate) {
-    const feedback = await db.dbQuery(
-      "INSERT INTO tbCritica (idFilme, idUsuario, textoCritica, notaCritica, dataCritica) VALUES (?, ?, ?, ?, ?);",
-      [idMovie, idUser, feedbackText, feedbackRate, feedbackDate]
-    );
+  async create(idUser, idMovie, feedbackText = "", feedbackRate, feedbackDate) {
+    const feedback = await db.dbQuery("call spInsertCritica(?, ?, ?, ?, ?)", [
+      idUser,
+      idMovie,
+      feedbackText,
+      feedbackRate,
+      feedbackDate,
+    ]);
     return feedback;
   }
   async update(
