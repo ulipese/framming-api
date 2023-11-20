@@ -33,7 +33,16 @@ class FollowingController {
 
     const following = await FollowingRepository.create(idUser, idFollowed);
 
-    response.status(200).json(following);
+    const [isFollowing] = await FollowingRepository.findById(
+      idUser,
+      idFollowed
+    );
+
+    if (isFollowing) {
+      response.status(200).json("You are following this user");
+    } else {
+      response.status(200).json("You don't follow more this user");
+    }
   }
 }
 
