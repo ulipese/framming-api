@@ -45,7 +45,7 @@ class FeedbackController {
     const { idMovie, feedbackText, feedbackRate, feedbackDate } = request.body;
     const { idCreator } = request.body;
 
-    if (idCreator && idFeedback) {
+    if (idCreator && idFeedback) { // dar like
       await FeedbackRepository.update(idUser, idCreator, idFeedback);
       const [feedback] = await FeedbackRepository.findById(
         idCreator,

@@ -197,8 +197,8 @@ DELIMITER //
     end
 //
 
--- call spCriarUsuario('36efc959-0425-4e81-8730-463e4f1ab09f', 'Felipe Sousa', 'lipe', 'lipe@gmail.com', '$2b$10$uF/uWmwRe/WJ5y9BpeHauueC0bNKrQCtfiUVNa1ENwyYtskYh04hW', 'nor'); -- nor / fun / adm
--- call spCriarUsuario('8a9be714-c40d-4cbc-98b2-6df9f16ad216', 'Mateus Coripio', 'matcop', 'mat@gmail.com', '$2b$10$hlRAJtuWrlNxqHZA6QqKQOWBG.hkJ.E9EIifmalqzF6e/giFOVjBq', 'adm');
+-- call spCriarUsuario('36efc959-0425-4e81-8730-463e4f1ab09f', '', 'Felipe Sousa', 'lipe', 'lipe@gmail.com', '$2b$10$uF/uWmwRe/WJ5y9BpeHauueC0bNKrQCtfiUVNa1ENwyYtskYh04hW', 'nor'); -- nor / fun / adm
+-- call spCriarUsuario('8a9be714-c40d-4cbc-98b2-6df9f16ad216', '', 'Mateus Coripio', 'matcop', 'mat@gmail.com', '$2b$10$hlRAJtuWrlNxqHZA6QqKQOWBG.hkJ.E9EIifmalqzF6e/giFOVjBq', 'adm');
 
 # drop procedure spCurtidaCritica
 DELIMITER //
@@ -223,10 +223,7 @@ DELIMITER //
 		end if;
     end
 //
--- call spCurtidaCritica('0fed1bdf-5e99-48cc-841f-7e04bdcf4e3a', '1421d23b-41e0-4c72-8e97-8cfbef7ce1e2', 1);
-update tbCritica set qtdCurtidaCritica = ((select qtdCurtidaCritica where idUsuario = '1421d23b-41e0-4c72-8e97-8cfbef7ce1e2' and idCritica = 1) +1) where idUsuario = '1421d23b-41e0-4c72-8e97-8cfbef7ce1e2';
-select * from tbCurtidaCritica;
-select * from tbCritica;
+
 # drop procedure spInsertCritica
 DELIMITER //
 	create procedure spInsertCritica(vIdUsuario varchar(36), vIdFilme bigint, vTextoCritica varchar(400), vNotaCritica double, vDataCritica date)
@@ -237,8 +234,14 @@ DELIMITER //
         
         if not exists (select * from tbFilme where idFilme = vIdFilme) then
 			insert into tbFilme (idFilme, notaFilme, qtdVisualizacaoFilme) values (vIdFilme, @mediaFilme, @qtdVisu);
+            if not exists (select * from tbJaVisto where idUsuario = vIdUsuario and idFilme = vIdFilme) then
+				insert into tbJaVisto values (vIdFilme, vIdUsuario);
+			end if;
 		else
 			update tbFilme set notaFilme = @mediaFilme, qtdVisualizacaoFilme = @qtdVisu where idFilme = vIdFilme;
+            if not exists (select * from tbJaVisto where idUsuario = vIdUsuario and idFilme = vIdFilme) then
+				insert into tbJaVisto values (vIdFilme, vIdUsuario);
+			end if;
         end if;
     end
 //

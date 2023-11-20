@@ -1,6 +1,7 @@
 const { Router } = require("express");
 
 const MovieController = require("./app/controllers/MovieController");
+const WatchedController = require("./app/controllers/WatchedController");
 const UserController = require("./app/controllers/UserController");
 const PosterController = require("./app/controllers/PosterController");
 const FeedbackController = require("./app/controllers/FeedbackController");
@@ -25,5 +26,6 @@ router.get("/feedback/:idUser/:idFeedback", FeedbackController.show);
 router.get("/feedbackMovie/:idUser/:idMovie", FeedbackController.index);
 router.post("/feedback/:idUser", FeedbackController.store);
 router.post("/feedback/:idUser/:idFeedback", FeedbackController.store);
+router.get("/already-watched/:idUser", WatchedController.index);
 
 module.exports = router;

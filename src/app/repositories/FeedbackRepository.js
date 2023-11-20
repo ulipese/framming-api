@@ -26,7 +26,7 @@ class FeedbackRepository {
       return feedbacks;
     }
     const feedbacks = await db.dbQuery(
-      "SELECT * FROM tbCritica WHERE idUsuario = ?;",
+      "SELECT * FROM tbCritica WHERE idUsuario = ? ORDER BY dataCritica DESC;",
       [idUser]
     );
 
