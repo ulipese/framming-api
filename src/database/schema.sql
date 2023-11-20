@@ -248,3 +248,24 @@ DELIMITER //
 
 -- call spInsertCritica('1421d23b-41e0-4c72-8e97-8cfbef7ce1e2', 507061, 'RUIM DMAIS', 0.5, '2023-11-17');
 -- insert into tbFilme values (34196, 4.5, 2, 0, 1)
+
+# drop procedure spInserirSeguindo
+DELIMITER //
+	create procedure spInserirSeguindo(vIdUsuario varchar(36), vIdSeguido varchar(36))
+	begin
+		if not exists (select * from tbUsuario where idUsuario = vIdUsuario) or not exists (select * from tbUsuario where idUsuario = vIdSeguido) then
+			select 'Usuário ou seguidor não existem';
+		else
+			if not exists (select * from tbSeguindo where idUsuario = vIdUsuario and idSeguido = vIdSeguido) then
+				insert into tbSeguindo values (vIdUsuario, vIdSeguido);
+                insert into tbSeguidores values (vIdSeguido, vIdUsuario);
+			else 
+				delete from tbSeguindo where idUsuario = vIdUsuario and idSeguido = vIdSeguido;
+                delete from tbSeguidores where idUsuario = vIdSeguido and idSeguidor = vIdUsuario;
+			end if;
+		end if;    
+    end
+//
+select * from tbSeguidores;
+select * from tbSeguindo;
+-- call spInserirSeguindo
