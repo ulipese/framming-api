@@ -23,5 +23,6 @@ https://https://framming-api.onrender.com/
 |/feedback/idUser/idCritica| Nenhum                                                           | GET         |Mostra uma crítica específica do usuário
 |/feedback/idUser (ou idMovie)| Nenhum                                                        | GET         |Mostra todas as crítica daquele usuário, ou, daquele filme
 |/feedback/best-rated | Nenhum                                                                | GET         |Mostra as crítica mais curtidas do app
-|/feedbackMovie/idUser/idMovie | Nenhum                                                     | GET         |Mostra todas as crítica que o usuário fez daquele filme
+|/feedbackMovie/idUser/idMovie | Nenhum                                                       | GET         |Mostra todas as crítica que o usuário fez daquele filme
+|/already-watched/idUser | Nenhum                                                             | GET         |Mostra todos os filmes já vistos pelo o usuário
 
