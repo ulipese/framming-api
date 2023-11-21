@@ -7,6 +7,7 @@ const PosterController = require("./app/controllers/PosterController");
 const FeedbackController = require("./app/controllers/FeedbackController");
 const FollowersController = require("./app/controllers/FollowersController");
 const FollowingController = require("./app/controllers/FollowingController");
+const WatchLaterController = require("./app/controllers/WatchLaterController");
 
 const router = Router();
 
@@ -32,4 +33,7 @@ router.get("/already-watched/:idUser", WatchedController.index);
 router.get("/followers/:idUser", FollowersController.index);
 router.get("/following/:idUser", FollowingController.index);
 router.post("/following/:idUser", FollowingController.store);
+router.get("/watch-later/:idUser", WatchLaterController.index);
+router.get("/watch-later/:idUser/:idMovie", WatchLaterController.show);
+router.post("/watch-later/:idUser", WatchLaterController.store);
 module.exports = router;

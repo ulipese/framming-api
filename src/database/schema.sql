@@ -9,8 +9,8 @@ create table tbGenero (
 );
 create table tbFilme (
 	idFilme bigint primary key,
-    notaFilme decimal(2, 1) not null,
-    qtdVisualizacaoFilme int,
+    notaFilme decimal(2, 1) not null default 0,
+    qtdVisualizacaoFilme int default 0,
     situacaoFilme boolean default 0,
     filmeNacional boolean default 0
 );
@@ -269,3 +269,24 @@ DELIMITER //
 select * from tbSeguidores;
 select * from tbSeguindo;
 -- call spInserirSeguindo
+
+# drop procedure spInsertQueroVer
+DELIMITER //
+	create procedure spInsertQueroVer(vIdFilme bigint, vIdUsuario varchar(36))
+	begin
+        if not exists (select * from tbFilme where idFilme = vIdFilme) then
+			insert into tbFilme (idFilme) values (vIdFilme);
+            if not exists (select * from tbQueroVer where idUsuario = vIdUsuario and idFilme = vIdFilme) then
+				INSERT INTO tbQueroVer VALUES (vIdFilme, vIdUsuario);
+			else 
+				delete from tbQueroVer where idFilme = vIdFilme and idUsuario = vIdUsuario;
+			end if;
+		else
+			if not exists (select * from tbQueroVer where idUsuario = vIdUsuario and idFilme = vIdFilme) then
+				INSERT INTO tbQueroVer VALUES (vIdFilme, vIdUsuario);
+			else 
+				delete from tbQueroVer where idFilme = vIdFilme and idUsuario = vIdUsuario;
+			end if;
+        end if;
+    end
+//
