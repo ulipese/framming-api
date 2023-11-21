@@ -28,3 +28,6 @@ https://https://framming-api.onrender.com/
 |/following/idUser | idFollowed                                                               | POST         |Segue/Dessegue algum usuário (o usuário é seguido automaticamente no banco)
 |/following/idUser | Nenhum                                                                   | GET         |Mostra todos os usuários que aquele usuário segue
 |/followers/idUser | Nenhum                                                                   | GET         |Mostra todos os seguidores do usuário
+|/watch-later/idUser | Nenhum                                                                 | GET         |Mostra todos os filmes salvos no quero ver do usuário
+|/watch-later/idUser | idMovie                                                                | POST        |Salva/remove um filme do quero ver
+|/watch-later/idUser/idMovie | Nenhum                                                         | GET         |Mostra um filme específico salvo no quero ver do usuário
