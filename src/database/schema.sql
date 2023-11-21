@@ -92,10 +92,8 @@ create table tbCritica (
     textoCritica varchar(400),
     notaCritica double not null,
     dataCritica date not null,
-    qtdCurtidaCritica int,
-    foreign key (idUsuario) references tbUsuario(idUsuario)
+    qtdCurtidaCritica int
 );
-
 create table tbCurtidaCritica (
 	idCritica int not null,
     idUsuario varchar(36) not null,
@@ -236,17 +234,19 @@ DELIMITER //
 			insert into tbFilme (idFilme, notaFilme, qtdVisualizacaoFilme) values (vIdFilme, @mediaFilme, @qtdVisu);
             if not exists (select * from tbJaVisto where idUsuario = vIdUsuario and idFilme = vIdFilme) then
 				insert into tbJaVisto values (vIdFilme, vIdUsuario);
+                delete from tbQueroVer where idFilme = vIdFilme and idUsuario = vIdUsuario;
 			end if;
 		else
 			update tbFilme set notaFilme = @mediaFilme, qtdVisualizacaoFilme = @qtdVisu where idFilme = vIdFilme;
             if not exists (select * from tbJaVisto where idUsuario = vIdUsuario and idFilme = vIdFilme) then
 				insert into tbJaVisto values (vIdFilme, vIdUsuario);
+                delete from tbQueroVer where idFilme = vIdFilme and idUsuario = vIdUsuario;
 			end if;
         end if;
     end
 //
-
--- call spInsertCritica('1421d23b-41e0-4c72-8e97-8cfbef7ce1e2', 507061, 'RUIM DMAIS', 0.5, '2023-11-17');
+select * from tbUsuario;
+-- call spInsertCritica('36efc959-0425-4e81-8730-463e4f1ab09f', 507089, 'perfeitooooo', 5, '2023-11-19');
 -- insert into tbFilme values (34196, 4.5, 2, 0, 1)
 
 # drop procedure spInserirSeguindo
@@ -266,9 +266,10 @@ DELIMITER //
 		end if;    
     end
 //
-select * from tbSeguidores;
-select * from tbSeguindo;
--- call spInserirSeguindo
+-- select * from tbSeguidores;
+-- select * from tbSeguindo;
+-- select * from tbUsuario;
+-- call spInserirSeguindo('36efc959-0425-4e81-8730-463e4f1ab09f', '8a9be714-c40d-4cbc-98b2-6df9f16ad216')
 
 # drop procedure spInsertQueroVer
 DELIMITER //
@@ -290,3 +291,8 @@ DELIMITER //
         end if;
     end
 //
+-- call spInsertQueroVer(507089, '36efc959-0425-4e81-8730-463e4f1ab09f')
+-- select * from tbQueroVer;
+
+
+

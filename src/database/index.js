@@ -4,9 +4,10 @@ const mysql = require("mysql2/promise");
 exports.dbQuery = async function dbQuery(query, values) {
   const connection = await mysql.createConnection({
     host: process.env.DBHOST,
+    port: process.env.DBPORT,
     user: process.env.DBUSER,
-    database: process.env.DBNAME,
     password: process.env.DBPASSWORD,
+    database: process.env.DBNAME,
     dateStrings: "date",
   });
   // query database
