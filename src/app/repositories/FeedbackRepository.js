@@ -4,7 +4,7 @@ class FeedbackRepository {
   async findAll(idUser, bestRated, idMovie) {
     if (!idUser && idMovie) {
       const feedbacks = await db.dbQuery(
-        "SELECT * FROM tbCritica WHERE idFilme = ?;",
+        "SELECT * FROM tbCritica WHERE idFilme = ? ORDER BY dataCritica DESC;",
         [idMovie]
       );
 
@@ -19,7 +19,7 @@ class FeedbackRepository {
     }
     if (idUser && idMovie) {
       const feedbacks = await db.dbQuery(
-        "SELECT * FROM tbCritica WHERE idFilme = ? and idUsuario = ?;",
+        "SELECT * FROM tbCritica WHERE idFilme = ? and idUsuario = ? ORDER BY dataCritica DESC;",
         [idMovie, idUser]
       );
 
@@ -35,8 +35,8 @@ class FeedbackRepository {
   async findById(idUser, idFeedback, idMovie) {
     if (idFeedback) {
       const feedback = await db.dbQuery(
-        "SELECT * FROM tbCritica WHERE idUsuario = ? and idCritica = ?;",
-        [idUser, idFeedback]
+        "SELECT * FROM tbCritica WHERE idUsuario = ? and idCritica = ? and idFilme = ?;",
+        [idUser, idFeedback, idMovie]
       );
 
       return feedback;
@@ -56,6 +56,7 @@ class FeedbackRepository {
       feedbackRate,
       feedbackDate,
     ]);
+
     return feedback;
   }
   async update(

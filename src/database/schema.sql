@@ -38,9 +38,7 @@ create table tbQueroVer (
 );
 create table tbJaVisto (
 	idFilme bigint not null,
-    idUsuario varchar(36) not null,
-    foreign key (idFilme) references tbFilme(idFilme),
-    foreign key (idUsuario) references tbUsuario(idUsuario)
+    idUsuario varchar(36) not null
 );
 create table tbPosterUsuario (
 	idFilme bigint not null,
@@ -50,9 +48,7 @@ create table tbPosterUsuario (
 );
 create table tbFavoritoUsuario (
 	idUsuario varchar(36) not null,
-    idFilme bigint not null,
-    foreign key (idFilme) references tbFilme(idFilme),
-    foreign key (idUsuario) references tbUsuario(idUsuario)
+    idFilme bigint not null
 );
 create table tbSeguidores (
 	idUsuario varchar(36) not null,
@@ -291,8 +287,36 @@ DELIMITER //
         end if;
     end
 //
--- call spInsertQueroVer(507089, '36efc959-0425-4e81-8730-463e4f1ab09f')
+-- call spInsertQueroVer(34196, '36efc959-0425-4e81-8730-463e4f1ab09f')
 -- select * from tbQueroVer;
 
+# drop procedure spInsertFilmeFavorito
+DELIMITER //
+	create procedure spInsertFilmeFavorito(vIdUsuario varchar(36), vIdFilme bigint)
+	begin
+        if not exists (select * from tbFilme where idFilme = vIdFilme) then
+			insert into tbFilme (idFilme) values (vIdFilme);
+            
+            if (select count(idFilme) from tbFavoritoUsuario where idUsuario = vIdUsuario) = 4 then
+				delete from tbFavoritoUsuario where idUsuario = vIdUsuario order by idUsuario asc limit 1;
+                insert into tbFavoritoUsuario values (vIdUsuario, vIdFilme);
+                select * from tbFavoritoUsuario;
+			else 
+				insert into tbFavoritoUsuario values (vIdUsuario, vIdFilme);
+			end if;
+		else
+			if (select count(idFilme) from tbFavoritoUsuario where idUsuario = vIdUsuario) = 4 then
+				delete from tbFavoritoUsuario where idUsuario = vIdUsuario order by idUsuario asc limit 1;
+                insert into tbFavoritoUsuario values (vIdUsuario, vIdFilme);
+			else 
+				insert into tbFavoritoUsuario values (vIdUsuario, vIdFilme);
+			end if;
+        end if;
+    end
+//
+
+-- call spInsertFilmeFavorito('d43e41fd-a3f9-4777-9d65-0c90d7fab610', 60);
+-- select * from tbFavoritoUsuario
+-- drop table tbFavoritoUsuario
 
 

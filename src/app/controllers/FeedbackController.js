@@ -61,7 +61,7 @@ class FeedbackController {
         .json({ Error: "All the feedback data are required!" });
     }
 
-    const [feedback] = await FeedbackRepository.findById(idUser, "", idMovie);
+    const [feedback] = await FeedbackRepository.findById(idUser, idFeedback, idMovie);
 
     if (feedback && idFeedback) {
       await FeedbackRepository.update(

@@ -8,6 +8,11 @@ class MovieController {
       const foundNationalMovies = await MovieRepository.findAll("pt-br", true);
       return response.status(200).json(foundNationalMovies);
     }
+    if (request.path.substring(0, 15) === "/favoriteMovies") {
+      const { idUser } = request.params;
+      const foundMovies = await MovieRepository.findAll("pt-br", false, idUser);
+      return response.status(200).json(foundMovies);
+    }
 
     if (request.path !== "/movies") {
       return response.redirect("/movies");
@@ -19,6 +24,17 @@ class MovieController {
   }
   async show(request, response) {
     const { id } = request.params;
+
+    if (request.path.substring(0, 15) === "/favoriteMovies") {
+      const { idUser, idFavoriteMovie } = request.params;
+      const [foundMovie] = await MovieRepository.findById(
+        idUser,
+        "pt-br",
+        false,
+        idFavoriteMovie
+      );
+      return response.status(200).json(foundMovie);
+    }
 
     if (request.path.substring(0, 7) !== "/movies") {
       const [foundNationalMovie] = await MovieRepository.findById(
@@ -59,6 +75,33 @@ class MovieController {
     return response.status(200).json(movie);
   }
   async store(request, response) {
+    if (request.path.substring(0, 15) === "/favoriteMovies") {
+      const { idUser } = request.params;
+      const { idMovie } = request.body;
+
+      if (!idUser || !idMovie) {
+        return response
+          .status(400)
+          .json("All the data are required to save a favorite movie");
+      }
+
+      const favMovie = await MovieRepository.create(true, idUser, idMovie);
+
+      // const favoritedMovie = await MovieRepository.findById(
+      //   idMovie,
+      //   "pt-br",
+      //   false,
+      //   null
+      // );
+      if (favMovie) {
+        return response.status(200).json("The movie was favorited");
+      }
+      
+      return response
+        .status(502)
+        .json("The movie wasn't favorited, try again later");
+    }
+
     // // salvar os filmes dos cinemas
     // const {} = request.body;
     // if ("") {
@@ -70,7 +113,7 @@ class MovieController {
     // if (movieExists) {
     //   return response
     //     .status(200)
-    //     .json({ Error: "The movie data are updated!" });
+    //     .json({ Error: "The movie data are update!" });
     // }
     // const [createdMovie] = await MovieRepository.create({});
     // if (createdMovie) {

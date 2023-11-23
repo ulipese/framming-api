@@ -36,4 +36,7 @@ router.post("/following/:idUser", FollowingController.store);
 router.get("/watch-later/:idUser", WatchLaterController.index);
 router.get("/watch-later/:idUser/:idMovie", WatchLaterController.show);
 router.post("/watch-later/:idUser", WatchLaterController.store);
+router.get("/favoriteMovies/:idUser", MovieController.index);
+router.post("/favoriteMovies/:idUser", MovieController.store);
+router.get("/favoriteMovies/:idUser/:idFavoriteMovie", MovieController.show);
 module.exports = router;

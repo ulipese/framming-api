@@ -4,13 +4,13 @@ const WatchLaterRepository = require("../repositories/WatchLaterRepository");
 class WatchLaterController {
   async index(request, response) {
     const { idUser } = request.params;
-    const [watchLaterMovies] = await WatchLaterRepository.findAll(idUser);
+    const watchLaterMovies = await WatchLaterRepository.findAll(idUser);
 
     if (!watchLaterMovies) {
       return response.status(404).json("Watch later movies not found");
     }
 
-    return response.status(200).json([watchLaterMovies]);
+    return response.status(200).json(watchLaterMovies);
   }
   async show(request, response) {
     const { idUser, idMovie } = request.params;
