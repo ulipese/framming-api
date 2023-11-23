@@ -19,8 +19,9 @@ https://https://framming-api.onrender.com/
 |/posters/idUser/idMovie  | Nenhum                                                            | GET         |Mostra um poster específico do usuário
 |/posters/idUser          | idMovie, posterPath                                               | POST        |Cria/Atualiza um poster do usuário
 |/feedback/idUser         | idMovie, feedbackText, feedbackRate, feedbackDate                 | POST        |Cria/Atualiza uma crítica do usuário
-|/feedback/idUser/idCritica| idCreator                                                        | POST        |Curte/Descurte alguma crítica de outro usuário (criador)
-|/feedback/idUser/idCritica| Nenhum                                                           | GET         |Mostra uma crítica específica do usuário
+|/feedback/idUser/idFeedback| idCreator                                                       | POST        |Curte/Descurte alguma crítica de outro usuário (criador)
+|/feedback/idUser/idFeedback| idMovie, feedbackText, feedbackRate, feedbackDate               | POST        |Atualiza um feedback existente
+|/feedback/idUser/idFeedback| Nenhum                                                          | GET         |Mostra uma crítica específica do usuário
 |/feedback/idUser (ou idMovie)| Nenhum                                                        | GET         |Mostra todas as crítica daquele usuário, ou, daquele filme
 |/feedback/best-rated | Nenhum                                                                | GET         |Mostra as crítica mais curtidas do app
 |/feedbackMovie/idUser/idMovie | Nenhum                                                       | GET         |Mostra todas as crítica que o usuário fez daquele filme
@@ -31,3 +32,7 @@ https://https://framming-api.onrender.com/
 |/watch-later/idUser | Nenhum                                                                 | GET         |Mostra todos os filmes salvos no quero ver do usuário
 |/watch-later/idUser | idMovie                                                                | POST        |Salva/remove um filme do quero ver
 |/watch-later/idUser/idMovie | Nenhum                                                         | GET         |Mostra um filme específico salvo no quero ver do usuário
+|/favoriteMovies/idUser | Nenhum                                                              | GET         |Pega todos (4) filmes favoritos do usuário
+|/favoriteMovies/idUser/idMovie | Nenhum                                                      | GET         |Pega um filme favorito específico do usuário
+|/favoriteMovies/idUser | idMovie                                                             | POST        |Favorita/desfavorita um filme do usuário (máx. 4 filmes favoritados)
+
