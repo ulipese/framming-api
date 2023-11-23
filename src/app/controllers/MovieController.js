@@ -27,7 +27,7 @@ class MovieController {
 
     if (request.path.substring(0, 15) === "/favoriteMovies") {
       const { idUser, idFavoriteMovie } = request.params;
-      const [foundMovie] = await MovieRepository.findById(
+      const foundMovie = await MovieRepository.findById(
         idUser,
         "pt-br",
         false,
@@ -96,7 +96,7 @@ class MovieController {
       if (favMovie) {
         return response.status(200).json("The movie was favorited");
       }
-      
+
       return response
         .status(502)
         .json("The movie wasn't favorited, try again later");

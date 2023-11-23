@@ -67,11 +67,21 @@ class MovieRepository {
         dbFavoriteMovies.map(async (movie) => {
           // make map async and await it with Promise.all()
 
-          const completeMovie = (
+          const apiMovie = (
             await callMovieAPI(`movie/${movie.idFilme}`, "pt-br")
           ).data; // await instead of .then()
+          // console.log(apiMovie);
+          const [dbMovie] = await db.dbQuery(
+            "SELECT notaFilme, qtdVisualizacaoFilme, situacaoFilme FROM tbFilme where idFilme = ?;",
+            [movie.idFilme]
+          );
+          // console.log(dbMovie);
+          const completeMovie = { ...apiMovie, ...dbMovie };
 
-          if (completeMovie.hasOwnProperty("original_title")) {
+          if (
+            completeMovie.hasOwnProperty("original_title") &&
+            completeMovie.hasOwnProperty("notaFilme")
+          ) {
             return completeMovie;
           } else {
             console.log(`error: ${completeMovie}`);
@@ -83,8 +93,39 @@ class MovieRepository {
     }
 
     if (!isNational) {
-      const movie = (await callMovieAPI(`movie/${id}`, language)).data;
-      return movie;
+      const dbMovies = await db.dbQuery(
+        "SELECT * FROM tbFilme where idFilme = ?;",
+        [id]
+      );
+
+      return Promise.all(
+        dbMovies.map(async (movie) => {
+          // make map async and await it with Promise.all()
+
+          const apiMovie = (
+            await callMovieAPI(`movie/${movie.idFilme}`, "pt-br")
+          ).data; // await instead of .then()
+          // console.log(apiMovie);
+          const [dbMovie] = await db.dbQuery(
+            "SELECT notaFilme, qtdVisualizacaoFilme, situacaoFilme FROM tbFilme where idFilme = ?;",
+            [movie.idFilme]
+          );
+          // console.log(dbMovie);
+          const completeMovie = { ...apiMovie, ...dbMovie };
+          console.log(completeMovie);
+
+          if (
+            completeMovie.hasOwnProperty("original_title") &&
+            completeMovie.hasOwnProperty("notaFilme")
+          ) {
+            return completeMovie;
+          } else {
+            console.log(`error: ${completeMovie}`);
+          }
+        })
+      ).catch((err) => {
+        console.log(err);
+      });
     }
 
     const dbNationalMovies = await db.dbQuery(
@@ -94,12 +135,21 @@ class MovieRepository {
     return Promise.all(
       dbNationalMovies.map(async (movie) => {
         // make map async and await it with Promise.all()
+        const apiMovie = (await callMovieAPI(`movie/${movie.idFilme}`, "pt-br"))
+          .data; // await instead of .then()
+        // console.log(apiMovie);
+        const [dbMovie] = await db.dbQuery(
+          "SELECT notaFilme, qtdVisualizacaoFilme, situacaoFilme FROM tbFilme where idFilme = ? and filmeNacional = 1;",
+          [movie.idFilme]
+        );
+        // console.log(dbMovie);
+        const completeMovie = { ...apiMovie, ...dbMovie };
+        console.log(completeMovie);
 
-        const completeMovie = (
-          await callMovieAPI(`movie/${movie.idFilme}`, language)
-        ).data; // await instead of .then()
-
-        if (completeMovie.hasOwnProperty("original_title")) {
+        if (
+          completeMovie.hasOwnProperty("original_title") &&
+          completeMovie.hasOwnProperty("notaFilme")
+        ) {
           return completeMovie;
         } else {
           console.log(`error: ${completeMovie}`);
