@@ -45,7 +45,8 @@ class FeedbackController {
     const { idMovie, feedbackText, feedbackRate, feedbackDate } = request.body;
     const { idCreator } = request.body;
 
-    if (idCreator && idFeedback) { // dar like
+    if (idCreator && idFeedback) {
+      // dar like
       await FeedbackRepository.update(idUser, idCreator, idFeedback);
       const [feedback] = await FeedbackRepository.findById(
         idCreator,
@@ -61,7 +62,11 @@ class FeedbackController {
         .json({ Error: "All the feedback data are required!" });
     }
 
-    const [feedback] = await FeedbackRepository.findById(idUser, idFeedback, idMovie);
+    const [feedback] = await FeedbackRepository.findById(
+      idUser,
+      idFeedback,
+      idMovie
+    );
 
     if (feedback && idFeedback) {
       await FeedbackRepository.update(
@@ -95,7 +100,22 @@ class FeedbackController {
       .status(502)
       .json({ Error: "Feedback not created, try again later" });
   }
-  async delete(request, response) {}
+  async delete(request, response) {
+    const { idUser, idFeedback } = request.params;
+
+    const [feedback] = await FeedbackRepository.findById(idUser, idFeedback);
+
+    if (feedback) {
+      const deletedFeedback = await FeedbackRepository.delete(
+        idUser,
+        idFeedback
+      );
+
+      return response.status(204).json("The feedback was deleted");
+    }
+
+    return response.status(404).json("Feedback not found");
+  }
 }
 
 module.exports = new FeedbackController();

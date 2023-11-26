@@ -83,7 +83,14 @@ class FeedbackRepository {
     );
     return feedback;
   }
-  async delete() {}
+  async delete(idUser, idFeedback) {
+    const deletedFeedback = await db.dbQuery(
+      "delete from tbCritica where idUsuario = ? and idCritica = ?;",
+      [idUser, idFeedback]
+    );
+
+    return deletedFeedback;
+  }
 }
 
 module.exports = new FeedbackRepository();

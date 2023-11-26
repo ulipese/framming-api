@@ -27,6 +27,7 @@ router.get("/feedback/:id", FeedbackController.index);
 router.get("/feedback/best-rated", FeedbackController.index);
 router.get("/feedback/:idUser/:idFeedback", FeedbackController.show);
 router.get("/feedbackMovie/:idUser/:idMovie", FeedbackController.index);
+router.post("/deleteFeedback/:idUser/:idFeedback", FeedbackController.delete);
 router.post("/feedback/:idUser", FeedbackController.store);
 router.post("/feedback/:idUser/:idFeedback", FeedbackController.store);
 router.get("/already-watched/:idUser", WatchedController.index);
