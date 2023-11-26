@@ -8,7 +8,7 @@ https://https://framming-api.onrender.com/
 | Endpoints (principais)  | Parâmetros do Body (json)                                         | Método      | Explicação      
 | ------------------------| ------------------------------------------------------------------|-------------|-----------------
 |/users                   | Nenhum                                                            | GET         |Mostra todos os users            
-|/users/id                | Nenhum                                                            | GET         |Mostra um user específico                         
+|/users/idUser ou nickUser| Nenhum                                                            | GET         |Mostra um user específico, usando o id ou o nickname dele
 |/users/register          | name, username, email, password, userType                         | POST        |Cadastra um user                   
 |/users/login             | email ou username, password                                       | POST        |Loga um user                   
 |/movies                  | Nenhum                                                            | GET         |Mostra "todos" os filmes   
