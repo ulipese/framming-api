@@ -27,7 +27,7 @@ https://https://framming-api.onrender.com/
 |/feedback/best-rated | Nenhum                                                                | GET         |Mostra as crítica mais curtidas do app
 |/feedbackMovie/idUser/idMovie | Nenhum                                                       | GET         |Mostra todas as crítica que o usuário fez daquele filme
 |/already-watched/idUser | Nenhum                                                             | GET         |Mostra todos os filmes já vistos pelo o usuário
-|/following/idUser | idFollowed                                                               | POST         |Segue/Dessegue algum usuário (o usuário é seguido automaticamente no banco)
+|/following/idUser | idFollowed                                                               | POST        |Segue/Dessegue algum usuário (o usuário é seguido automaticamente no banco)
 |/following/idUser | Nenhum                                                                   | GET         |Mostra todos os usuários que aquele usuário segue
 |/followers/idUser | Nenhum                                                                   | GET         |Mostra todos os seguidores do usuário
 |/watch-later/idUser | Nenhum                                                                 | GET         |Mostra todos os filmes salvos no quero ver do usuário
@@ -36,4 +36,6 @@ https://https://framming-api.onrender.com/
 |/favoriteMovies/idUser | Nenhum                                                              | GET         |Pega todos (4) filmes favoritos do usuário
 |/favoriteMovies/idUser/idMovie | Nenhum                                                      | GET         |Pega um filme favorito específico do usuário
 |/favoriteMovies/idUser | idMovie                                                             | POST        |Favorita/desfavorita um filme do usuário (máx. 4 filmes favoritados)
-
+|/payment/cpfUser | Nenhum                                                                    | GET         |Mostra todos os métodos de pagamento do usuário
+|/payment/cpfUser/numCard | Nenhum                                                            | GET         |Mostra um método de pagamento específico do usuário
+|/payment/idUser | numCard, nameCard, cpfUser, valCard, cvvCard                               | POST        |Salva um método de pagamento do usuário
