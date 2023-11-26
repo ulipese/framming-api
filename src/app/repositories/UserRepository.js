@@ -5,10 +5,18 @@ class UserRepository {
     const users = await db.dbQuery("SELECT * FROM tbUsuario;");
     return users;
   }
-  async findById(id) {
+  async findById(userInfo) {
+    if (userInfo.length === 36 && userInfo.includes("-")) {
+      const user = await db.dbQuery(
+        "SELECT * FROM tbUsuario WHERE idUsuario = ?;",
+        [userInfo]
+      );
+      return user;
+    }
+
     const user = await db.dbQuery(
-      "SELECT * FROM tbUsuario WHERE idUsuario = ?;",
-      [id]
+      "SELECT * FROM tbUsuario WHERE nickUsuario = ?;",
+      [userInfo]
     );
     return user;
   }
