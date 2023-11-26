@@ -28,8 +28,10 @@ https://https://framming-api.onrender.com/
 |/feedbackMovie/idUser/idMovie | Nenhum                                                       | GET         |Mostra todas as crítica que o usuário fez daquele filme
 |/already-watched/idUser | Nenhum                                                             | GET         |Mostra todos os filmes já vistos pelo o usuário
 |/following/idUser | idFollowed                                                               | POST        |Segue/Dessegue algum usuário (o usuário é seguido automaticamente no banco)
-|/following/idUser | Nenhum                                                                   | GET         |Mostra todos os usuários que aquele usuário segue
+|/following/idUser | Nenhum                                                                   | GET         |Mostra todos que aquele usuário segue
+|/following/idUser/idFollower ou nickFollower | Nenhum                                        | GET         |Mostra uma pessoa específica que aquele usuário segue
 |/followers/idUser | Nenhum                                                                   | GET         |Mostra todos os seguidores do usuário
+|/followers/idUser/idFollower ou nickFollower | Nenhum                                        | GET         |Mostra um seguidor específico do usuário
 |/watch-later/idUser | Nenhum                                                                 | GET         |Mostra todos os filmes salvos no quero ver do usuário
 |/watch-later/idUser | idMovie                                                                | POST        |Salva/remove um filme do quero ver
 |/watch-later/idUser/idMovie | Nenhum                                                         | GET         |Mostra um filme específico salvo no quero ver do usuário
