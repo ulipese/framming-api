@@ -169,42 +169,7 @@ class MovieRepository {
     );
 
     if (!dbNationalMovies) {
-      const insertMovie = await db.dbQuery(
-        "INSERT INTO tbFilme (idFilme, filmeNacional) values (?, 1);",
-        [id]
-      );
-
-      const [dbNationalMovies] = await db.dbQuery(
-        "SELECT * FROM tbFilme where idFilme = ? and filmeNacional = 1;",
-        [id]
-      );
-
-      return Promise.all(
-        [dbNationalMovies].map(async (movie) => {
-          // make map async and await it with Promise.all()
-
-          const apiMovie = (
-            await callMovieAPI(`movie/${movie.idFilme}`, "pt-br")
-          ).data; // await instead of .then()
-
-          const [dbNationalMovies] = await db.dbQuery(
-            "SELECT notaFilme, qtdVisualizacaoFilme, situacaoFilme FROM tbFilme where idFilme = ? and filmeNacional = 1;",
-            [movie.idFilme]
-          );
-          const completeMovie = { ...apiMovie, ...dbNationalMovies };
-
-          if (
-            completeMovie.hasOwnProperty("original_title") &&
-            completeMovie.hasOwnProperty("notaFilme")
-          ) {
-            return completeMovie;
-          } else {
-            console.log(`error: ${completeMovie}`);
-          }
-        })
-      ).catch((err) => {
-        console.log(err);
-      });
+      return [];
     } else {
       return Promise.all(
         [dbNationalMovies].map(async (movie) => {

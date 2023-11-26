@@ -9,7 +9,7 @@ create table tbGenero (
 );
 create table tbFilme (
 	idFilme bigint primary key,
-    notaFilme decimal(2, 1) not null default 0,
+    notaFilme decimal(2, 1) default 0.0,
     qtdVisualizacaoFilme int default 0,
     situacaoFilme boolean default 0,
     filmeNacional boolean default 0
@@ -317,5 +317,3 @@ DELIMITER //
 
 -- call spInsertFilmeFavorito('d43e41fd-a3f9-4777-9d65-0c90d7fab610', 507089);
 -- select * from tbFavoritoUsuario
-
-
