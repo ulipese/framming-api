@@ -35,8 +35,8 @@ class FeedbackRepository {
   async findById(idUser, idFeedback, idMovie) {
     if (idFeedback) {
       const feedback = await db.dbQuery(
-        "SELECT * FROM tbCritica WHERE idUsuario = ? and idCritica = ? and idFilme = ?;",
-        [idUser, idFeedback, idMovie]
+        "SELECT * FROM tbCritica WHERE idUsuario = ? and idCritica = ?;",
+        [idUser, idFeedback]
       );
 
       return feedback;
