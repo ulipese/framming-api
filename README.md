@@ -39,3 +39,4 @@ https://https://framming-api.onrender.com/
 |/payment/cpfUser | Nenhum                                                                    | GET         |Mostra todos os métodos de pagamento do usuário
 |/payment/cpfUser/numCard | Nenhum                                                            | GET         |Mostra um método de pagamento específico do usuário
 |/payment/idUser | numCard, nameCard, cpfUser, valCard, cvvCard                               | POST        |Salva um método de pagamento do usuário
+|/reward | Nenhum                                                                             | GET         |Mostra todas as recompensas (use 'ticketRecompensa' para diferenciar tipos)
