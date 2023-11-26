@@ -19,8 +19,9 @@ https://https://framming-api.onrender.com/
 |/posters/idUser/idMovie  | Nenhum                                                            | GET         |Mostra um poster específico do usuário
 |/posters/idUser          | idMovie, posterPath                                               | POST        |Cria/Atualiza um poster do usuário
 |/feedback/idUser         | idMovie, feedbackText, feedbackRate, feedbackDate                 | POST        |Cria/Atualiza uma crítica do usuário
-|/feedback/idUser/idFeedback| idCreator                                                       | POST        |Curte/Descurte alguma crítica de outro usuário (criador)
-|/feedback/idUser/idFeedback| idMovie, feedbackText, feedbackRate, feedbackDate               | POST        |Atualiza um feedback existente
+|/feedback/idUser/idFeedback | idCreator                                                      | POST        |Curte/Descurte alguma crítica de outro usuário (criador)
+|/feedback/idUser/idFeedback | idMovie, feedbackText, feedbackRate, feedbackDate              | POST        |Atualiza um feedback existente
+|/deleteFeedback/idUser/idFeedback| Nenhum                                                    | POST        |Deleta um feedback existente, retorno do delete é um response 204 vazio
 |/feedback/idUser/idFeedback| Nenhum                                                          | GET         |Mostra uma crítica específica do usuário
 |/feedback/idUser (ou idMovie)| Nenhum                                                        | GET         |Mostra todas as crítica daquele usuário, ou, daquele filme
 |/feedback/best-rated | Nenhum                                                                | GET         |Mostra as crítica mais curtidas do app
