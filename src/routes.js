@@ -8,6 +8,8 @@ const FeedbackController = require("./app/controllers/FeedbackController");
 const FollowersController = require("./app/controllers/FollowersController");
 const FollowingController = require("./app/controllers/FollowingController");
 const WatchLaterController = require("./app/controllers/WatchLaterController");
+const PaymentController = require("./app/controllers/PaymentController");
+const RewardController = require("./app/controllers/RewardController");
 
 const router = Router();
 
@@ -32,7 +34,9 @@ router.post("/feedback/:idUser", FeedbackController.store);
 router.post("/feedback/:idUser/:idFeedback", FeedbackController.store);
 router.get("/already-watched/:idUser", WatchedController.index);
 router.get("/followers/:idUser", FollowersController.index);
+router.get("/followers/:idUser/:followerInfo", FollowersController.show);
 router.get("/following/:idUser", FollowingController.index);
+router.get("/following/:idUser/:userInfo", FollowingController.show);
 router.post("/following/:idUser", FollowingController.store);
 router.get("/watch-later/:idUser", WatchLaterController.index);
 router.get("/watch-later/:idUser/:idMovie", WatchLaterController.show);
@@ -40,4 +44,9 @@ router.post("/watch-later/:idUser", WatchLaterController.store);
 router.get("/favoriteMovies/:idUser", MovieController.index);
 router.post("/favoriteMovies/:idUser", MovieController.store);
 router.get("/favoriteMovies/:idUser/:idFavoriteMovie", MovieController.show);
+router.get("/payment/:cpfUser", PaymentController.index);
+router.get("/payment/:cpfUser/:numCard", PaymentController.show);
+router.post("/payment/:idUser", PaymentController.store);
+router.get("/reward", RewardController.index);
+
 module.exports = router;

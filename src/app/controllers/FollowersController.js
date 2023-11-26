@@ -13,8 +13,8 @@ class FollowersController {
     response.status(200).json(followers);
   }
   async show(request, response) {
-    const { idUser } = request.params;
-    const followers = await FollowersRepository.findById(idUser);
+    const { idUser, followerInfo } = request.params;
+    const [followers] = await FollowersRepository.findSpecificUser(idUser, followerInfo);
 
     if (!followers) {
       response.status(404).json("Followers not found");

@@ -7,17 +7,17 @@ class FollowingController {
     const followers = await FollowingRepository.findAll(idUser);
 
     if (!followers) {
-      response.status(404).json("Followers not found");
+      response.status(404).json("Followings not found");
     }
 
     response.status(200).json(followers);
   }
   async show(request, response) {
-    const { idUser } = request.params;
-    const followers = await FollowingRepository.findById(idUser);
+    const { idUser, userInfo } = request.params;
+    const [followers] = await FollowingRepository.findSpecificFollowed(idUser, userInfo);
 
     if (!followers) {
-      response.status(404).json("Followers not found");
+      response.status(404).json("Followings not found");
     }
 
     response.status(200).json(followers);
@@ -33,7 +33,7 @@ class FollowingController {
 
     const following = await FollowingRepository.create(idUser, idFollowed);
 
-    const [isFollowing] = await FollowingRepository.findById(
+    const [isFollowing] = await FollowingRepository.findSpecificFollowed(
       idUser,
       idFollowed
     );

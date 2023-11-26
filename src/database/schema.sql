@@ -53,12 +53,14 @@ create table tbFavoritoUsuario (
 create table tbSeguidores (
 	idUsuario varchar(36) not null,
     idSeguidor varchar(36) not null,
+    nickSeguidor varchar(50) not null,
     foreign key (idUsuario) references tbUsuario(idUsuario),
     foreign key (idSeguidor) references tbUsuario(idUsuario)
 );
 create table tbSeguindo (
 	idUsuario varchar(36) not null,
     idSeguido varchar(36) not null,
+    nickSeguido varchar(50) not null,
     foreign key (idUsuario) references tbUsuario(idUsuario),
     foreign key (idSeguido) references tbUsuario(idUsuario)
 );
@@ -109,19 +111,22 @@ create table tbDiarioUsuario (
 create table tbRecompensa (
 	idRecompensa int auto_increment primary key,
     nomeRecompensa varchar(100) not null,
+    descRecompensa varchar (250) not null,
+    ticketRecompensa boolean default 0,
     valorRecompensa int not null,
     imgRecompensa varchar(500) not null
 );
 create table tbPagamento (
 	idPagamento int auto_increment primary key,
     idUsuario varchar(36) not null,
-    numeroCartao int not null,
-    nomeCartao int not null,
-    cpfTitular int not null,
+    numeroCartao bigint not null unique,
+    nomeCartao varchar(50) not null,
+    cpfTitular bigint not null,
     validadeCartao varchar(5) not null,
     cvvCartao int not null,
     foreign key (idUsuario) references tbUsuario(idUsuario)
 );
+
 create table tbNFIngresso (
 	NF int auto_increment primary key,
     idUsuario varchar(36) not null,
@@ -253,8 +258,8 @@ DELIMITER //
 			select 'Usuário ou seguidor não existem';
 		else
 			if not exists (select * from tbSeguindo where idUsuario = vIdUsuario and idSeguido = vIdSeguido) then
-				insert into tbSeguindo values (vIdUsuario, vIdSeguido);
-                insert into tbSeguidores values (vIdSeguido, vIdUsuario);
+				insert into tbSeguindo values (vIdUsuario, vIdSeguido, (select nickUsuario from tbUsuario where idUsuario = vIdSeguido));
+                insert into tbSeguidores values (vIdSeguido, vIdUsuario, (select nickUsuario from tbUsuario where idUsuario = vIdUsuario));
 			else 
 				delete from tbSeguindo where idUsuario = vIdUsuario and idSeguido = vIdSeguido;
                 delete from tbSeguidores where idUsuario = vIdSeguido and idSeguidor = vIdUsuario;
@@ -317,3 +322,30 @@ DELIMITER //
 
 -- call spInsertFilmeFavorito('d43e41fd-a3f9-4777-9d65-0c90d7fab610', 507089);
 -- select * from tbFavoritoUsuario
+
+-- insert into tbRecompensa (nomeRecompensa, descRecompensa, ticketRecompensa, valorRecompensa, imgRecompensa) values ("Ingresso 3D", "Ingresso 3D para você curtir seu filme da melhor forma para enquadrar sua emoção, e DE GRAÇA, pode nos agradecer depois!", 1, 800, "https://i.ibb.co/k4cnyQJ/ticket-3d.png")
+
+# drop procedure spCompraIngresso
+DELIMITER //
+	create procedure spCompraIngresso(vIdUsuario varchar(36), vIdFilme bigint)
+	begin
+        if not exists (select * from tbFilme where idFilme = vIdFilme) then
+			insert into tbFilme (idFilme) values (vIdFilme);
+            
+            if (select count(idFilme) from tbFavoritoUsuario where idUsuario = vIdUsuario) = 4 then
+				delete from tbFavoritoUsuario where idUsuario = vIdUsuario order by idUsuario asc limit 1;
+                insert into tbFavoritoUsuario values (vIdUsuario, vIdFilme);
+                select * from tbFavoritoUsuario;
+			else 
+				insert into tbFavoritoUsuario values (vIdUsuario, vIdFilme);
+			end if;
+		else
+			if (select count(idFilme) from tbFavoritoUsuario where idUsuario = vIdUsuario) = 4 then
+				delete from tbFavoritoUsuario where idUsuario = vIdUsuario order by idUsuario asc limit 1;
+                insert into tbFavoritoUsuario values (vIdUsuario, vIdFilme);
+			else 
+				insert into tbFavoritoUsuario values (vIdUsuario, vIdFilme);
+			end if;
+        end if;
+    end
+//
