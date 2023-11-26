@@ -315,8 +315,7 @@ DELIMITER //
     end
 //
 
--- call spInsertFilmeFavorito('d43e41fd-a3f9-4777-9d65-0c90d7fab610', 60);
+-- call spInsertFilmeFavorito('d43e41fd-a3f9-4777-9d65-0c90d7fab610', 507089);
 -- select * from tbFavoritoUsuario
--- drop table tbFavoritoUsuario
 
 

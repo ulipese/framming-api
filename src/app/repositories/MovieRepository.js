@@ -70,12 +70,10 @@ class MovieRepository {
           const apiMovie = (
             await callMovieAPI(`movie/${movie.idFilme}`, "pt-br")
           ).data; // await instead of .then()
-          // console.log(apiMovie);
           const [dbMovie] = await db.dbQuery(
             "SELECT notaFilme, qtdVisualizacaoFilme, situacaoFilme FROM tbFilme where idFilme = ?;",
             [movie.idFilme]
           );
-          // console.log(dbMovie);
           const completeMovie = { ...apiMovie, ...dbMovie };
 
           if (
@@ -93,26 +91,132 @@ class MovieRepository {
     }
 
     if (!isNational) {
-      const dbMovies = await db.dbQuery(
+      const [dbMovies] = await db.dbQuery(
         "SELECT * FROM tbFilme where idFilme = ?;",
         [id]
       );
 
+      if (!dbMovies) {
+        const insertMovie = await db.dbQuery(
+          "INSERT INTO tbFilme (idFilme) values (?);",
+          [id]
+        );
+
+        const [dbMovies] = await db.dbQuery(
+          "SELECT * FROM tbFilme where idFilme = ?;",
+          [id]
+        );
+
+        return Promise.all(
+          [dbMovies].map(async (movie) => {
+            // make map async and await it with Promise.all()
+
+            const apiMovie = (
+              await callMovieAPI(`movie/${movie.idFilme}`, "pt-br")
+            ).data; // await instead of .then()
+
+            const [dbMovie] = await db.dbQuery(
+              "SELECT notaFilme, qtdVisualizacaoFilme, situacaoFilme FROM tbFilme where idFilme = ?;",
+              [movie.idFilme]
+            );
+            const completeMovie = { ...apiMovie, ...dbMovie };
+
+            if (
+              completeMovie.hasOwnProperty("original_title") &&
+              completeMovie.hasOwnProperty("notaFilme")
+            ) {
+              return completeMovie;
+            } else {
+              console.log(`error: ${completeMovie}`);
+            }
+          })
+        ).catch((err) => {
+          console.log(err);
+        });
+      } else {
+        return Promise.all(
+          [dbMovies].map(async (movie) => {
+            // make map async and await it with Promise.all()
+
+            const apiMovie = (
+              await callMovieAPI(`movie/${movie.idFilme}`, "pt-br")
+            ).data; // await instead of .then()
+
+            const [dbMovie] = await db.dbQuery(
+              "SELECT notaFilme, qtdVisualizacaoFilme, situacaoFilme FROM tbFilme where idFilme = ?;",
+              [movie.idFilme]
+            );
+            const completeMovie = { ...apiMovie, ...dbMovie };
+
+            if (
+              completeMovie.hasOwnProperty("original_title") &&
+              completeMovie.hasOwnProperty("notaFilme")
+            ) {
+              return completeMovie;
+            } else {
+              console.log(`error: ${completeMovie}`);
+            }
+          })
+        ).catch((err) => {
+          console.log(err);
+        });
+      }
+    }
+
+    const [dbNationalMovies] = await db.dbQuery(
+      "SELECT * FROM tbFilme where idFilme = ? and filmeNacional = 1;",
+      [id]
+    );
+
+    if (!dbNationalMovies) {
+      const insertMovie = await db.dbQuery(
+        "INSERT INTO tbFilme (idFilme, filmeNacional) values (?, 1);",
+        [id]
+      );
+
+      const [dbNationalMovies] = await db.dbQuery(
+        "SELECT * FROM tbFilme where idFilme = ? and filmeNacional = 1;",
+        [id]
+      );
+
       return Promise.all(
-        dbMovies.map(async (movie) => {
+        [dbNationalMovies].map(async (movie) => {
           // make map async and await it with Promise.all()
 
           const apiMovie = (
             await callMovieAPI(`movie/${movie.idFilme}`, "pt-br")
           ).data; // await instead of .then()
-          // console.log(apiMovie);
-          const [dbMovie] = await db.dbQuery(
-            "SELECT notaFilme, qtdVisualizacaoFilme, situacaoFilme FROM tbFilme where idFilme = ?;",
+
+          const [dbNationalMovies] = await db.dbQuery(
+            "SELECT notaFilme, qtdVisualizacaoFilme, situacaoFilme FROM tbFilme where idFilme = ? and filmeNacional = 1;",
             [movie.idFilme]
           );
-          // console.log(dbMovie);
+          const completeMovie = { ...apiMovie, ...dbNationalMovies };
+
+          if (
+            completeMovie.hasOwnProperty("original_title") &&
+            completeMovie.hasOwnProperty("notaFilme")
+          ) {
+            return completeMovie;
+          } else {
+            console.log(`error: ${completeMovie}`);
+          }
+        })
+      ).catch((err) => {
+        console.log(err);
+      });
+    } else {
+      return Promise.all(
+        [dbNationalMovies].map(async (movie) => {
+          // make map async and await it with Promise.all()
+          const apiMovie = (
+            await callMovieAPI(`movie/${movie.idFilme}`, "pt-br")
+          ).data; // await instead of .then()
+          const [dbMovie] = await db.dbQuery(
+            "SELECT notaFilme, qtdVisualizacaoFilme, situacaoFilme FROM tbFilme where idFilme = ? and filmeNacional = 1;",
+            [movie.idFilme]
+          );
           const completeMovie = { ...apiMovie, ...dbMovie };
-          console.log(completeMovie);
 
           if (
             completeMovie.hasOwnProperty("original_title") &&
@@ -127,37 +231,6 @@ class MovieRepository {
         console.log(err);
       });
     }
-
-    const dbNationalMovies = await db.dbQuery(
-      "SELECT * FROM tbFilme WHERE filmeNacional = 1 and idFilme = ?;",
-      [id]
-    );
-    return Promise.all(
-      dbNationalMovies.map(async (movie) => {
-        // make map async and await it with Promise.all()
-        const apiMovie = (await callMovieAPI(`movie/${movie.idFilme}`, "pt-br"))
-          .data; // await instead of .then()
-        // console.log(apiMovie);
-        const [dbMovie] = await db.dbQuery(
-          "SELECT notaFilme, qtdVisualizacaoFilme, situacaoFilme FROM tbFilme where idFilme = ? and filmeNacional = 1;",
-          [movie.idFilme]
-        );
-        // console.log(dbMovie);
-        const completeMovie = { ...apiMovie, ...dbMovie };
-        console.log(completeMovie);
-
-        if (
-          completeMovie.hasOwnProperty("original_title") &&
-          completeMovie.hasOwnProperty("notaFilme")
-        ) {
-          return completeMovie;
-        } else {
-          console.log(`error: ${completeMovie}`);
-        }
-      })
-    ).catch((err) => {
-      console.log(err);
-    });
   }
   async create(isFavMovie, idUser, idMovie) {
     if (isFavMovie) {
