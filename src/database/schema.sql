@@ -3,10 +3,12 @@ use dbFramming;
 -- drop database dbFramming;
 
 -- TABLES
+/*
 create table tbGenero (
 	idGenero int auto_increment primary key,
     genero varchar(50) not null
 );
+*/
 create table tbFilme (
 	idFilme bigint primary key,
     notaFilme decimal(2, 1) default 0.0,
@@ -14,12 +16,13 @@ create table tbFilme (
     situacaoFilme boolean default 0,
     filmeNacional boolean default 0
 );
+/*
 create table tbGeneroFilme (
 	idGenero int not null,
     idFilme bigint not null,
     foreign key (idGenero) references tbGenero(idGenero),
     foreign key (idFilme) references tbFilme(idFilme)
-);
+);*/
 create table tbUsuario (
 	idUsuario varchar(36) primary key,
     iconUsuario varchar(500) default 'https://imageupload.io/ib/yzauelSzIISZpoC_1697494770.png',
@@ -28,8 +31,11 @@ create table tbUsuario (
     emailUsuario varchar(100) unique not null,
     senhaUsuario varchar(60) not null,
     qtdPontos smallint default 0,
-    tipoUsuario varchar(3) default "nor" -- nor (normal) / fun (funcionário) / adm (administradores / ghostfy)
+    tipoUsuario varchar(3) default "nor", -- nor (normal) / fun (funcionário) / adm (administradores / ghostfy)
+    usuarioAtivo boolean default 1,
+	tokenCinema int not null
 );
+
 create table tbQueroVer (
 	idFilme bigint not null,
     idUsuario varchar(36) not null,
@@ -138,24 +144,22 @@ create table tbCinema (
 	idCinema int auto_increment primary key,
     nomeCinema varchar(100) not null,
     enderecoCinema varchar(300) not null,
-    tokenCinema varchar(50) not null
+    tokenCinema varchar(50) not null,
+    qtdSala int not null
 );
 create table tbSessao (
 	idSessao int auto_increment primary key,
     idFilme bigint not null,
-    idCinema int not null,
+    tokenCinema int not null,
     dataHorarioSessao datetime not null,
     qtdIngressosSessao int not null,
-    salaSessao int not null,
-    foreign key (idCinema) references tbCinema(idCinema),
-    foreign key (idFilme) references tbFilme(idFilme)
+    salaSessao int not null
 );
 create table tbCinemaSessao (
-	idCinema int not null,
-    idSessao int not null,
-    foreign key (idCinema) references tbCinema(idCinema),
-    foreign key (idSessao) references tbSessao(idSessao)
+	tokenCinema int not null,
+    idSessao int not null
 );
+
 create table tbIngresso (
 	idIngresso int auto_increment primary key,
     idFilme bigint not null,
@@ -177,12 +181,12 @@ create table tbHistoricoIngresso (
 -- STORED PROCEDURES
 # drop procedure spCriarUsuario;
 DELIMITER //
-	create procedure spCriarUsuario(vIdUsuario varchar(36), vIconUsuario varchar(500), vNomeUsuario varchar(50), vNickUsuario varchar(50), vEmailUsuario varchar(100), vSenhaUsuario varchar(60), vTipoUsuario varchar(3))
+	create procedure spCriarUsuario(vIdUsuario varchar(36), vIconUsuario varchar(500), vNomeUsuario varchar(50), vNickUsuario varchar(50), vEmailUsuario varchar(100), vSenhaUsuario varchar(60), vTipoUsuario varchar(3), vTokenCinema int)
 	begin
 		if not exists (select * from tbUsuario where idUsuario = vIdUsuario) then
 			if not exists (select * from tbUsuario where emailUsuario = vEmailUsuario) then
 				if not exists (select * from tbUsuario where nickUsuario = vNickUsuario) then
-					insert into tbUsuario (idUsuario, iconUsuario, nomeUsuario, nickUsuario, emailUsuario, senhaUsuario, tipoUsuario) values (vIdUsuario, vIconUsuario, vNomeUsuario, vNickUsuario, vEmailUsuario, vSenhaUsuario, vTipoUsuario);
+					insert into tbUsuario (idUsuario, iconUsuario, nomeUsuario, nickUsuario, emailUsuario, senhaUsuario, tipoUsuario, tokenCinema) values (vIdUsuario, vIconUsuario, vNomeUsuario, vNickUsuario, vEmailUsuario, vSenhaUsuario, vTipoUsuario, vTokenCinema);
 					select * from tbUsuario where idUsuario = vIdUsuario;
                 else
 					select 'Nick de usuário já cadastrado';
@@ -349,3 +353,15 @@ DELIMITER //
         end if;
     end
 //
+
+DELIMITER //
+CREATE EVENT autoDayInsert ON SCHEDULE EVERY 15 DAY DO BEGIN
+    SET @dayCounter = 0;
+    WHILE @dayCounter < 5 DO
+        INSERT INTO appointmentDays(`day`) VALUES(NOW() + INTERVAL @dayCounter DAY);
+        SET @dayCounter = @dayCounter +1;
+    END WHILE;
+    DELETE from tbSessao where idSessao > 0 order by dataHorarioSessao asc limit 10;
+END //
+-- set global event_scheduler=ON
+-- set global max_connections = 300;

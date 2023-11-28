@@ -19,6 +19,16 @@ const formatName = async (name) => {
 
 class UserController {
   async index(request, response) {
+    const { codCinema } = request.params;
+
+    if (codCinema) {
+      const funcs = await UserRepository.findAll(codCinema);
+
+      if (!funcs) {
+        return response.status(404).json({ Error: "Funcs not found" });
+      }
+      return response.status(200).json(funcs);
+    }
     const users = await UserRepository.findAll();
     if (!users) {
       return response.status(404).json({ Error: "Users not found" });
@@ -65,7 +75,8 @@ class UserController {
     return response.status(200).json(user);
   }
   async store(request, response) {
-    const { name, icon, username, email, password, userType } = request.body;
+    const { name, icon, username, email, password, userType, codCinema } =
+      request.body;
 
     if (!username || !email || !password) {
       return response
@@ -73,19 +84,31 @@ class UserController {
         .json({ Error: "All the user data are required!" });
     }
 
-    const [userExists] = await UserRepository.findByEmail(email);
+    if (request.path.substring(0, 12) === "/updateUsers") {
+      const { idUser } = request.params;
 
-    if (userExists) {
-      return response
-        .status(409)
-        .json({ Error: "User Already Exists. Try Login!" });
+      const userExists = await UserRepository.findByEmail(email);
+
+      if (userExists) {
+        const encryptedPassword = await bcrypt.hash(password, 10);
+
+        const updatedUser = await UserRepository.update({
+          idUsuario: idUser,
+          nomeUsuario: await formatName(name.toLowerCase()),
+          nickUsuario: username.toLowerCase(),
+          emailUsuario: email.toLowerCase(),
+          senhaUsuario: encryptedPassword,
+        });
+
+        if (updatedUser) {
+          const [newUpdatedUser] = await UserRepository.findByEmail(email);
+
+          return response.status(200).json(newUpdatedUser);
+        }
+      }
     }
 
     const encryptedPassword = await bcrypt.hash(password, 10);
-
-    // if (icon) {
-    //   const apiRes = callIconAPI();
-    // }
 
     const [createdUser] = await UserRepository.create({
       idUsuario: uuid(),
@@ -95,6 +118,7 @@ class UserController {
       emailUsuario: email.toLowerCase(),
       senhaUsuario: encryptedPassword,
       tipoUsuario: userType,
+      tokenCinema: codCinema,
     });
 
     const token = jwt.sign(
@@ -112,8 +136,19 @@ class UserController {
       .status(502)
       .json({ Error: "User not created, try again later" });
   }
-  async update(request, response) {}
-  async delete(request, response) {}
+  async delete(request, response) {
+    const { idUser } = request.params;
+
+    const [user] = await UserRepository.findById(idUser);
+
+    if (user) {
+      const deletedUser = await UserRepository.delete(idUser);
+
+      return response.status(204).json("The user was deactivated");
+    }
+
+    return response.status(404).json("User not found");
+  }
 }
 
 module.exports = new UserController();

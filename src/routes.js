@@ -10,6 +10,8 @@ const FollowingController = require("./app/controllers/FollowingController");
 const WatchLaterController = require("./app/controllers/WatchLaterController");
 const PaymentController = require("./app/controllers/PaymentController");
 const RewardController = require("./app/controllers/RewardController");
+const CinemaController = require("./app/controllers/CinemaController");
+const SessionController = require("./app/controllers/SessionController");
 
 const router = Router();
 
@@ -19,7 +21,10 @@ router.get("/movies/:id", MovieController.show);
 router.get("/nationalMovies", MovieController.index);
 router.get("/nationalMovies/:id", MovieController.show);
 router.get("/users", UserController.index);
+router.get("/func/:codCinema", UserController.index);
+router.post("/updateUsers/:idUser", UserController.store);
 router.get("/users/:id", UserController.show);
+router.post("/deleteUsers/:idUser", UserController.delete);
 router.post("/users/register", UserController.store);
 router.post("/users/login", UserController.show);
 router.post("/posters/:idUser", PosterController.store);
@@ -48,5 +53,13 @@ router.get("/payment/:cpfUser", PaymentController.index);
 router.get("/payment/:cpfUser/:numCard", PaymentController.show);
 router.post("/payment/:idUser", PaymentController.store);
 router.get("/reward", RewardController.index);
+router.get("/cinema", CinemaController.index);
+router.get("/cinema/:codCinema", CinemaController.show);
+router.post("/cinema", CinemaController.store);
+router.post("/deleteCinema/:codCinema", CinemaController.delete);
+router.get("/session/:codCinema", SessionController.index);
+router.get("/session/:codCinema/:idMovie", SessionController.show);
+router.post("/session/:codCinema", SessionController.store);
+router.post("/deleteSession/:codCinema/:idSession", SessionController.delete);
 
 module.exports = router;
