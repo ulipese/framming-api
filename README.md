@@ -42,3 +42,18 @@ https://https://framming-api.onrender.com/
 |/payment/cpfUser/numCard | Nenhum                                                            | GET         |Mostra um método de pagamento específico do usuário
 |/payment/idUser | numCard, nameCard, cpfUser, valCard, cvvCard                               | POST        |Salva um método de pagamento do usuário
 |/reward | Nenhum                                                                             | GET         |Mostra todas as recompensas (use 'ticketRecompensa' para diferenciar tipos)
+|/func/codCinema | Nenhum                                                                     | GET         |Mostra todos os funcionários daquele cinema
+|/updateUsers/idUser | name, username, email, password                                        | POST        |Atualiza dados de usuários, sejam funcionários ou não
+|/deleteUsers/idUser| Nenhum                                                                  | POST        |Deleta um usuário 
+|/cinema| Nenhum                                                                              | GET         |Lista todos os cinemas
+|/cinema| nameCinema, addressCinema, codCinema, numRooms                                      | POST        |Cria um cinema, caso o codCinema já exista, os dados do cinema atualizam
+|/cinema/codCinema| Nenhum                                                                    | GET         |Mostra um cinema específico
+|/deleteCinema/codCinema| Nenhum                                                              | POST        |Deleta um cinema
+|/session/codCinema| idMovie, dateSession, timeSession, tickets, sessionRoom                  | POST        |Cria uma sessão
+|/session/codCinema| Nenhum                                                                   | GET         |Mostra todas as sessões daquele cinema, de todos os filmes
+|/session/codCinema/idMovie| Nenhum                                                           | GET         |Mostra todas as sessões daquele cinema, de um filme específico
+|/deleteSession/codCinema/idSession| Nenhum                                                   | GET         |Deleta uma sessão de um cinema específico
+
+
+
+
