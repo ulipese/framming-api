@@ -19,10 +19,10 @@ class SessionRepository {
   }
   async create(idMovie, codCinema, datetimeSession, tickets, sessionRoom) {
     const Session = await db.dbQuery(
-      "insert into tbSessao (idFilme, tokenCinema, dataHorarioSessao, qtdIngressosSessao, salaSessao) values (?, ?, ?, ?, ?)",
+      "insert into tbSessao (idFilme, tokenCinema, dataHorarioSessao, qtdIngressosSessao, salaSessao) values (?, ?, ?, ?, ?);",
       [idMovie, codCinema, datetimeSession, tickets, sessionRoom]
     );
-
+    
     return Session;
   }
   // async update(nameSession, addressSession, numRooms, codSession) {

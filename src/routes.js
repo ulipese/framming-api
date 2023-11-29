@@ -12,6 +12,7 @@ const PaymentController = require("./app/controllers/PaymentController");
 const RewardController = require("./app/controllers/RewardController");
 const CinemaController = require("./app/controllers/CinemaController");
 const SessionController = require("./app/controllers/SessionController");
+const TicketController = require("./app/controllers/TicketController");
 
 const router = Router();
 
@@ -61,5 +62,9 @@ router.get("/session/:codCinema", SessionController.index);
 router.get("/session/:codCinema/:idMovie", SessionController.show);
 router.post("/session/:codCinema", SessionController.store);
 router.post("/deleteSession/:codCinema/:idSession", SessionController.delete);
+router.get("/ticket", TicketController.index);
+router.get("/ticket/:idUser", TicketController.show);
+router.get("/ticket/:idUser/:idMovie", TicketController.show);
+router.post("/ticket", TicketController.store);
 
 module.exports = router;

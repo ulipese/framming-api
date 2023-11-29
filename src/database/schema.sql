@@ -159,18 +159,16 @@ create table tbCinemaSessao (
 	tokenCinema int not null,
     idSessao int not null
 );
-
 create table tbIngresso (
 	idIngresso int auto_increment primary key,
     idFilme bigint not null,
     valorIngresso decimal(5, 2) not null,
     tipoIngresso varchar(7) not null default "inteira", -- "meia" ou "inteira"
     idSessao int not null,
-    validadeIngresso boolean not null,
-    qrCodeIngresso varchar(200) not null,
     foreign key (idFilme) references tbFilme(idFilme),
     foreign key (idSessao) references tbSessao(idSessao)
 );
+
 create table tbHistoricoIngresso (
 	idIngresso int not null,
     idUsuario varchar(36) not null,
@@ -329,6 +327,19 @@ DELIMITER //
 
 -- insert into tbRecompensa (nomeRecompensa, descRecompensa, ticketRecompensa, valorRecompensa, imgRecompensa) values ("Ingresso 3D", "Ingresso 3D para você curtir seu filme da melhor forma para enquadrar sua emoção, e DE GRAÇA, pode nos agradecer depois!", 1, 800, "https://i.ibb.co/k4cnyQJ/ticket-3d.png")
 
+DELIMITER //
+CREATE EVENT autoDayInsert ON SCHEDULE EVERY 15 DAY DO BEGIN
+    SET @dayCounter = 0;
+    WHILE @dayCounter < 5 DO
+        INSERT INTO appointmentDays(`day`) VALUES(NOW() + INTERVAL @dayCounter DAY);
+        SET @dayCounter = @dayCounter +1;
+    END WHILE;
+    DELETE from tbSessao where idSessao > 0 order by dataHorarioSessao asc limit 10;
+END //
+
+-- set global event_scheduler=ON
+-- set global max_connections = 10000;
+
 # drop procedure spCompraIngresso
 DELIMITER //
 	create procedure spCompraIngresso(vIdUsuario varchar(36), vIdFilme bigint)
@@ -354,14 +365,3 @@ DELIMITER //
     end
 //
 
-DELIMITER //
-CREATE EVENT autoDayInsert ON SCHEDULE EVERY 15 DAY DO BEGIN
-    SET @dayCounter = 0;
-    WHILE @dayCounter < 5 DO
-        INSERT INTO appointmentDays(`day`) VALUES(NOW() + INTERVAL @dayCounter DAY);
-        SET @dayCounter = @dayCounter +1;
-    END WHILE;
-    DELETE from tbSessao where idSessao > 0 order by dataHorarioSessao asc limit 10;
-END //
--- set global event_scheduler=ON
--- set global max_connections = 300;
