@@ -51,6 +51,7 @@ https://https://framming-api.onrender.com/
 |/deleteCinema/codCinema| Nenhum                                                              | POST        |Deleta um cinema
 |/session/codCinema| idMovie, dateSession, timeSession, tickets, sessionRoom                  | POST        |Cria uma sessão
 |/session/codCinema| Nenhum                                                                   | GET         |Mostra todas as sessões daquele cinema, de todos os filmes
+|/session/0/idMovie| Nenhum                                                                   | GET         |Mostra todas as sessões daquele filme, independente do cinema 
 |/session/codCinema/idMovie| Nenhum                                                           | GET         |Mostra todas as sessões daquele cinema, de um filme específico
 |/deleteSession/codCinema/idSession| Nenhum                                                   | GET         |Deleta uma sessão de um cinema específico
 
