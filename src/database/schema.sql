@@ -86,8 +86,10 @@ create table tbListaFilme (
 create table tbCurtidaLista (
 	idLista int not null,
     idUsuario varchar(36) not null,
+    idCriador varchar(36) not null,
     foreign key (idLista) references tbLista(idLista),
-    foreign key (idUsuario) references tbUsuario(idUsuario)
+    foreign key (idUsuario) references tbUsuario(idUsuario),
+    foreign key (idCriador) references tbUsuario(idUsuario)
 );
 create table tbCritica (
 	idCritica int auto_increment primary key,
@@ -172,6 +174,7 @@ create table tbIngresso (
 create table tbHistoricoIngresso (
 	idIngresso int not null,
     idUsuario varchar(36) not null,
+    dataCompraIngresso datetime not null,
 	foreign key (idIngresso) references tbIngresso(idIngresso),
     foreign key (idUsuario) references tbUsuario(idUsuario)
 );
@@ -342,26 +345,61 @@ END //
 
 # drop procedure spCompraIngresso
 DELIMITER //
-	create procedure spCompraIngresso(vIdUsuario varchar(36), vIdFilme bigint)
+	create procedure spCompraIngresso(vIdUsuario varchar(36), vIdFilme bigint, vIdIngresso int, vNumeroCartaoPagamento bigint, vNumIngressos int)
 	begin
-        if not exists (select * from tbFilme where idFilme = vIdFilme) then
-			insert into tbFilme (idFilme) values (vIdFilme);
-            
-            if (select count(idFilme) from tbFavoritoUsuario where idUsuario = vIdUsuario) = 4 then
-				delete from tbFavoritoUsuario where idUsuario = vIdUsuario order by idUsuario asc limit 1;
-                insert into tbFavoritoUsuario values (vIdUsuario, vIdFilme);
-                select * from tbFavoritoUsuario;
+    if exists (select * from tbUsuario where idUsuario = vIdUsuario) then
+        if exists (select * from tbIngresso where idIngresso = vIdIngresso and idFilme = vIdFilme) then
+            if exists (select idPagamento from tbPagamento where idUsuario = vIdUsuario and numeroCartao = vNumeroCartaoPagamento) then
+				set @idPagamento = (select idPagamento from tbPagamento where idUsuario = vIdUsuario and numeroCartao = vNumeroCartaoPagamento);
+				set @idSessao = (select idSessao from tbIngresso where idIngresso = vIdIngresso);
+                
+                if (select qtdIngressosSessao from tbSessao where idSessao = @idSessao) > 0 then
+					insert into tbNFIngresso (idUsuario, idPagamento) values (vIdUsuario, @idPagamento);
+					insert into tbHistoricoIngresso values (vIdIngresso, vIdUsuario, current_timestamp());
+					update tbSessao set qtdIngressosSessao = ((select qtdIngressosSessao from tbSessao where idSessao = @idSessao) - vNumIngressos) where idSessao = @idSessao;
+                    SELECT idUsuario, idFilme, valorIngresso, tipoIngresso, idSessao, tbIngresso.idIngresso, tbHistoricoIngresso.dataCompraIngresso FROM tbIngresso inner join tbHistoricoIngresso on tbIngresso.idIngresso = tbHistoricoIngresso.idIngresso where idUsuario = vIdUsuario and idFilme = vIdFilme order by dataCompraIngresso desc limit vNumIngressos;
+				else
+					select 'Ingressos já estão esgotados';
+				end if;
 			else 
-				insert into tbFavoritoUsuario values (vIdUsuario, vIdFilme);
+				select 'Pagamento inválido';
 			end if;
 		else
-			if (select count(idFilme) from tbFavoritoUsuario where idUsuario = vIdUsuario) = 4 then
-				delete from tbFavoritoUsuario where idUsuario = vIdUsuario order by idUsuario asc limit 1;
-                insert into tbFavoritoUsuario values (vIdUsuario, vIdFilme);
-			else 
-				insert into tbFavoritoUsuario values (vIdUsuario, vIdFilme);
-			end if;
+			select 'Ingresso inválido';
         end if;
+	else
+		select "Usuário não existe";
+	end if;
     end
 //
 
+-- select * from tbSessao where idSessao = 2;
+-- update tbSessao set qtdIngressosSessao = 4 where idSessao = 2;
+
+-- insert into tbListaFilme values (2, 901362);
+-- select * from tbLista;
+-- update tbLista set qtdCurtidaLista = (select qtdCurtidaLista from tbLista where idLista = 1 and idUsuario = '36efc959-0425-4e81-8730-463e4f1ab09f') + 1 where idUsuario = '36efc959-0425-4e81-8730-463e4f1ab09f' and idLista = 1;
+
+-- drop procedure spCurtidaLista;
+DELIMITER //
+	create procedure spCurtidaLista(vIdUsuario varchar(36), vIdCriador varchar(36), vIdLista int)
+	begin
+		if not exists (select * from tbUsuario where idUsuario = vIdUsuario) or not exists (select * from tbUsuario where idUsuario = vIdCriador) then
+			select 'Usuário ou criador não existem';
+		else
+			if not exists (select * from tbLista where idUsuario = vIdCriador and idLista = vIdLista) then
+				select "Lista não existe";
+			else
+                if not exists (select * from tbCurtidaLista where idLista = vIdLista and idCriador = vIdCriador and idUsuario = vIdUsuario) then
+					update tbLista set qtdCurtidaLista = ((select qtdCurtidaLista where idUsuario = vIdCriador and idLista = vIdLista) + 1) where idUsuario = vIdCriador and idLista = vIdLista;
+					insert into tbCurtidaLista values (vIdLista, vIdUsuario, vIdCriador);
+                    select * from tbLista where idUsuario = vIdUsuario and idLista = vIdLista;
+				else 
+					update tbLista set qtdCurtidaLista = ((select qtdCurtidaLista where idUsuario = vIdCriador and idLista = vIdLista) - 1) where idUsuario = vIdCriador and idLista = vIdLista;
+					delete from tbCurtidaLista where idLista = vIdLista and idUsuario = vIdUsuario and idCriador = vIdCriador;
+                    select * from tbLista where idUsuario = vIdUsuario and idLista = vIdLista;
+				end if;
+            end if;    
+		end if;
+    end
+//

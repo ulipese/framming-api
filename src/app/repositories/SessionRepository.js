@@ -10,6 +10,16 @@ class SessionRepository {
     return Sessions;
   }
   async findById(codCinema, idMovie) {
+    if (codCinema == 0 && idMovie) {
+      console.log("sas");
+      const Sessions = await db.dbQuery(
+        "SELECT * FROM tbSessao where idFilme = ? order by dataHorarioSessao asc;",
+        [idMovie]
+      );
+
+      return Sessions;
+    }
+
     const Session = await db.dbQuery(
       "SELECT * FROM tbSessao WHERE tokenCinema = ? and idFilme = ? order by dataHorarioSessao asc;",
       [codCinema, idMovie]
@@ -22,8 +32,15 @@ class SessionRepository {
       "insert into tbSessao (idFilme, tokenCinema, dataHorarioSessao, qtdIngressosSessao, salaSessao) values (?, ?, ?, ?, ?);",
       [idMovie, codCinema, datetimeSession, tickets, sessionRoom]
     );
-    
-    return Session;
+
+    console.log(Session.insertId);
+
+    const CinemaSession = await db.dbQuery(
+      "insert into tbCinemaSessao values (?, ?);",
+      [codCinema, Session.insertId]
+    );
+
+    return CinemaSession;
   }
   // async update(nameSession, addressSession, numRooms, codSession) {
   //   const Session = await db.dbQuery(

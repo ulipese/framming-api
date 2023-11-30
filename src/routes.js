@@ -13,6 +13,7 @@ const RewardController = require("./app/controllers/RewardController");
 const CinemaController = require("./app/controllers/CinemaController");
 const SessionController = require("./app/controllers/SessionController");
 const TicketController = require("./app/controllers/TicketController");
+const ListController = require("./app/controllers/ListController");
 
 const router = Router();
 
@@ -62,9 +63,15 @@ router.get("/session/:codCinema", SessionController.index);
 router.get("/session/:codCinema/:idMovie", SessionController.show);
 router.post("/session/:codCinema", SessionController.store);
 router.post("/deleteSession/:codCinema/:idSession", SessionController.delete);
-router.get("/ticket", TicketController.index);
-router.get("/ticket/:idUser", TicketController.show);
+router.get("/ticket/:codCinema", TicketController.index);
+router.get("/ticket/user/:idUser", TicketController.show);
+router.get("/ticket/movie/:idMovie", TicketController.show);
 router.get("/ticket/:idUser/:idMovie", TicketController.show);
 router.post("/ticket", TicketController.store);
-
+router.post("/ticket/:idUser", TicketController.store);
+router.get("/list/:idUser", ListController.index);
+router.get("/list/:idUser/:idList", ListController.show);
+router.post("/list/:idUser", ListController.store); 
+router.post("/list/:idUser/:idList", ListController.store);
+router.post("/list/:idUser/:idList/:idCreator", ListController.store);
 module.exports = router;

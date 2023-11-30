@@ -3,8 +3,17 @@ const TicketRepository = require("../repositories/TicketRepository");
 class TicketController {
   async index(request, response) {
     const { codCinema } = request.params;
-    const tickets = await TicketRepository.findAll(codCinema);
-    
+    if (codCinema) {
+      const tickets = await TicketRepository.findAll(codCinema);
+
+      if (!tickets) {
+        return response.status(404).json({ Error: "Tickets not found" });
+      }
+
+      return response.status(200).json(tickets);
+    }
+    const tickets = await TicketRepository.findAll("");
+
     if (!tickets) {
       return response.status(404).json({ Error: "Tickets not found" });
     }
@@ -24,7 +33,7 @@ class TicketController {
       return response.status(200).json(tickets);
     }
 
-    const ticket = await TicketRepository.findById(idUser, idMovie);
+    const ticket = await TicketRepository.findById(null, idMovie);
 
     if (!ticket) {
       return response.status(404).json({ Error: "Tickets not found" });
@@ -33,7 +42,27 @@ class TicketController {
     return response.status(200).json(ticket);
   }
   async store(request, response) {
-    const { idMovie, ticketValue, ticketType, idSession } = request.body;
+    const { idUser } = request.params;
+    const { idMovie, ticketValue, ticketType, idSession } = request.body; // create ticket
+    const { idTicket, numCardPayment, numTickets } = request.body; // buy ticket
+
+    if (idUser) {
+      const purchasedTicket = await TicketRepository.purchase(
+        idUser,
+        idMovie,
+        idTicket,
+        numCardPayment,
+        numTickets
+      );
+
+      if (purchasedTicket) {
+        return response.status(200).json(purchasedTicket[0]);
+      }
+
+      return response
+        .status(502)
+        .json({ Error: "Ticket not purchased, try again later" });
+    }
 
     const createdTicket = await TicketRepository.create(
       idMovie,
