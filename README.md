@@ -53,8 +53,17 @@ https://https://framming-api.onrender.com/
 |/session/codCinema| Nenhum                                                                   | GET         |Mostra todas as sessões daquele cinema, de todos os filmes
 |/session/0/idMovie| Nenhum                                                                   | GET         |Mostra todas as sessões daquele filme, independente do cinema 
 |/session/codCinema/idMovie| Nenhum                                                           | GET         |Mostra todas as sessões daquele cinema, de um filme específico
-|/deleteSession/codCinema/idSession| Nenhum                                                   | GET         |Deleta uma sessão de um cinema específico
-
+|/deleteSession/codCinema/idSession| Nenhum                                                   | POST        |Deleta uma sessão de um cinema específico
+|/ticket/codCinema| Nenhum                                                                    | GET         |Pega todos os ingressos de um cinema específico
+|/ticket/user/idUser| Nenhum                                                                  | GET         |Pega todos os ingressos comprados pelo usuário
+|/ticket/movie/idMovie| Nenhum                                                                | GET         |Pega todos os ingressos de um filme específico, independente de cinema
+|/ticket/idUser/idMovie| Nenhum                                                               | GET         |Pega todos os ingressos comprados pelo usuário, mas de um filme específico
+|/ticket| idMovie, ticketValue, ticketType, idSession                                         | POST        |Cria um ingresso
+|/list/idUser| Nenhum                                                                         | GET         |Mostra todas as listas do usuário (informações básicas sobre todas)
+|/list/idUser/idList| Nenhum                                                                  | GET         |Mostra uma lista específica, com todos os filmes sendo mostrado num array
+|/list/idUser| listDescription                                                                | POST        |Cria uma lista
+|/list/idUser/idList| idMovie                                                                 | POST        |Salva um filme na lista
+|/list/idUser/idList/idCreator| Nenhum                                                        | POST        |Curte/Descurte uma lista
 
 
 
