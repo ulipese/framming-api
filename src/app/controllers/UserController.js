@@ -78,7 +78,7 @@ class UserController {
     const { name, icon, username, email, password, userType, codCinema } =
       request.body;
 
-    if (!username || !email || !password) {
+    if (!name || !username || !email || !password) {
       return response
         .status(400)
         .json({ Error: "All the user data are required!" });

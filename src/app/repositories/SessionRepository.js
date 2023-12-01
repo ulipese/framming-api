@@ -7,17 +7,58 @@ class SessionRepository {
       [codCinema]
     );
 
-    return Sessions;
+    return Promise.all(
+      Sessions.map(async (session) => {
+        const date = session.dataHorarioSessao.substring(0, 9).split("-");
+
+        const dataSessao = `${date[2]}/${date[1]}/${date[0]}`;
+        const horarioSessao = session.dataHorarioSessao
+          .split(" ")[1]
+          .substring(0, 5);
+
+        session.dataSessao = dataSessao;
+        session.horarioSessao = horarioSessao;
+        delete session.dataHorarioSessao;
+
+        if (session.hasOwnProperty("idSessao")) {
+          return session;
+        } else {
+          console.log(`error: ${session}`);
+        }
+      })
+    ).catch((err) => {
+      console.log(err);
+    });
   }
   async findById(codCinema, idMovie) {
     if (codCinema == 0 && idMovie) {
-      console.log("sas");
       const Sessions = await db.dbQuery(
         "SELECT * FROM tbSessao where idFilme = ? order by dataHorarioSessao asc;",
         [idMovie]
       );
 
-      return Sessions;
+      return Promise.all(
+        Sessions.map(async (session) => {
+          const date = session.dataHorarioSessao.substring(0, 9).split("-");
+
+          const dataSessao = `${date[2]}/${date[1]}/${date[0]}`;
+          const horarioSessao = session.dataHorarioSessao
+            .split(" ")[1]
+            .substring(0, 5);
+
+          session.dataSessao = dataSessao;
+          session.horarioSessao = horarioSessao;
+          delete session.dataHorarioSessao;
+
+          if (session.hasOwnProperty("idSessao")) {
+            return session;
+          } else {
+            console.log(`error: ${session}`);
+          }
+        })
+      ).catch((err) => {
+        console.log(err);
+      });
     }
 
     const Session = await db.dbQuery(
@@ -32,8 +73,6 @@ class SessionRepository {
       "insert into tbSessao (idFilme, tokenCinema, dataHorarioSessao, qtdIngressosSessao, salaSessao) values (?, ?, ?, ?, ?);",
       [idMovie, codCinema, datetimeSession, tickets, sessionRoom]
     );
-
-    console.log(Session.insertId);
 
     const CinemaSession = await db.dbQuery(
       "insert into tbCinemaSessao values (?, ?);",
