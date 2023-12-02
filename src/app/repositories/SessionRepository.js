@@ -11,7 +11,10 @@ class SessionRepository {
       Sessions.map(async (session) => {
         const date = session.dataHorarioSessao.substring(0, 9).split("-");
 
-        const dataSessao = `${date[2]}/${date[1]}/${date[0]}`;
+        const dataSessao = `${date[2].length === 2 ? date[2] : "0" + date[2]}/${
+          date[1].length === 2 ? date[1] : "0" + date[1]
+        }/${date[0]}`;
+
         const horarioSessao = session.dataHorarioSessao
           .split(" ")[1]
           .substring(0, 5);
@@ -58,7 +61,10 @@ class SessionRepository {
         Sessions.map(async (session) => {
           const date = session.dataHorarioSessao.substring(0, 9).split("-");
 
-          const dataSessao = `${date[2]}/${date[1]}/${date[0]}`;
+          const dataSessao = `${
+            date[2].length === 2 ? date[2] : "0" + date[2]
+          }/${date[1].length === 2 ? date[1] : "0" + date[1]}/${date[0]}`;
+
           const horarioSessao = session.dataHorarioSessao
             .split(" ")[1]
             .substring(0, 5);
@@ -105,7 +111,10 @@ class SessionRepository {
       Session.map(async (session) => {
         const date = session.dataHorarioSessao.substring(0, 9).split("-");
 
-        const dataSessao = `${date[2]}/${date[1]}/${date[0]}`;
+        const dataSessao = `${date[2].length === 2 ? date[2] : "0" + date[2]}/${
+          date[1].length === 2 ? date[1] : "0" + date[1]
+        }/${date[0]}`;
+
         const horarioSessao = session.dataHorarioSessao
           .split(" ")[1]
           .substring(0, 5);
