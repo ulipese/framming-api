@@ -19,6 +19,23 @@ class SessionRepository {
         session.dataSessao = dataSessao;
         session.horarioSessao = horarioSessao;
         delete session.dataHorarioSessao;
+        if (session.qtdIngressosSessao !== 0) {
+          const dbIngressos = await db.dbQuery(
+            "SELECT idIngresso, valorIngresso, tipoIngresso FROM tbIngresso where idSessao = ? and idFilme = ?;",
+            [session.idSessao, session.idFilme]
+          );
+
+          const ingressos = [];
+
+          await dbIngressos.map((ingresso) => {
+            ingressos.push(ingresso);
+            return ingresso;
+          });
+
+          session.ingressos = ingressos;
+        } else {
+          session.ingressos = ["Ingressos foram esgotados!"];
+        }
 
         if (session.hasOwnProperty("idSessao")) {
           return session;
@@ -50,6 +67,24 @@ class SessionRepository {
           session.horarioSessao = horarioSessao;
           delete session.dataHorarioSessao;
 
+          if (session.qtdIngressosSessao !== 0) {
+            const dbIngressos = await db.dbQuery(
+              "SELECT idIngresso, valorIngresso, tipoIngresso FROM tbIngresso where idSessao = ? and idFilme = ?;",
+              [session.idSessao, session.idFilme]
+            );
+
+            const ingressos = [];
+
+            await dbIngressos.map((ingresso) => {
+              ingressos.push(ingresso);
+              return ingresso;
+            });
+
+            session.ingressos = ingressos;
+          } else {
+            session.ingressos = ["Ingressos foram esgotados!"];
+          }
+
           if (session.hasOwnProperty("idSessao")) {
             return session;
           } else {
@@ -66,7 +101,45 @@ class SessionRepository {
       [codCinema, idMovie]
     );
 
-    return Session;
+    return Promise.all(
+      Session.map(async (session) => {
+        const date = session.dataHorarioSessao.substring(0, 9).split("-");
+
+        const dataSessao = `${date[2]}/${date[1]}/${date[0]}`;
+        const horarioSessao = session.dataHorarioSessao
+          .split(" ")[1]
+          .substring(0, 5);
+
+        session.dataSessao = dataSessao;
+        session.horarioSessao = horarioSessao;
+        delete session.dataHorarioSessao;
+        if (session.qtdIngressosSessao !== 0) {
+          const dbIngressos = await db.dbQuery(
+            "SELECT idIngresso, valorIngresso, tipoIngresso FROM tbIngresso where idSessao = ? and idFilme = ?;",
+            [session.idSessao, session.idFilme]
+          );
+
+          const ingressos = [];
+
+          await dbIngressos.map((ingresso) => {
+            ingressos.push(ingresso);
+            return ingresso;
+          });
+
+          session.ingressos = ingressos;
+        } else {
+          session.ingressos = ["Ingressos foram esgotados!"];
+        }
+
+        if (session.hasOwnProperty("idSessao")) {
+          return session;
+        } else {
+          console.log(`error: ${session}`);
+        }
+      })
+    ).catch((err) => {
+      console.log(err);
+    });
   }
   async create(idMovie, codCinema, datetimeSession, tickets, sessionRoom) {
     const Session = await db.dbQuery(
