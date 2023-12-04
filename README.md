@@ -53,11 +53,13 @@ https://https://framming-api.onrender.com/
 |/session/codCinema| Nenhum                                                                   | GET         |Mostra todas as sessões daquele cinema, de todos os filmes
 |/session/0/idMovie| Nenhum                                                                   | GET         |Mostra todas as sessões daquele filme, independente do cinema 
 |/session/codCinema/idMovie| Nenhum                                                           | GET         |Mostra todas as sessões daquele cinema, de um filme específico
+|/session/0/0/idSession| Nenhum                                                               | GET         |Mostra uma sessão específica
 |/deleteSession/codCinema/idSession| Nenhum                                                   | POST        |Deleta uma sessão de um cinema específico
 |/ticket/codCinema| Nenhum                                                                    | GET         |Pega todos os ingressos de um cinema específico
 |/ticket/user/idUser| Nenhum                                                                  | GET         |Pega todos os ingressos comprados pelo usuário
 |/ticket/movie/idMovie| Nenhum                                                                | GET         |Pega todos os ingressos de um filme específico, independente de cinema
 |/ticket/idUser/idMovie| Nenhum                                                               | GET         |Pega todos os ingressos comprados pelo usuário, mas de um filme específico
+|/ticket/session/idUser/idSession| Nenhum                                                     | GET         |Pega todos os ingressos comprados pelo usuário, de uma sessão específica
 |/ticket| idMovie, ticketValue, ticketType, idSession                                         | POST        |Cria um ingresso
 |/list/idUser| Nenhum                                                                         | GET         |Mostra todas as listas do usuário (informações básicas sobre todas)
 |/list/idUser/idList| Nenhum                                                                  | GET         |Mostra uma lista específica, com todos os filmes sendo mostrado num array
