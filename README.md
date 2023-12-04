@@ -61,6 +61,7 @@ https://https://framming-api.onrender.com/
 |/ticket/idUser/idMovie| Nenhum                                                               | GET         |Pega todos os ingressos comprados pelo usuário, mas de um filme específico
 |/ticket/session/idUser/idSession| Nenhum                                                     | GET         |Pega todos os ingressos comprados pelo usuário, de uma sessão específica
 |/ticket| idMovie, ticketValue, ticketType, idSession                                         | POST        |Cria um ingresso
+|/ticket/idUser| idMovie, idTicket, numCardPayment, numTickets                                | POST        |Compra ingressos já criados
 |/list/idUser| Nenhum                                                                         | GET         |Mostra todas as listas do usuário (informações básicas sobre todas)
 |/list/idUser/idList| Nenhum                                                                  | GET         |Mostra uma lista específica, com todos os filmes sendo mostrado num array
 |/list/idUser| listDescription                                                                | POST        |Cria uma lista
