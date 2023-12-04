@@ -3,13 +3,13 @@ const db = require("../../database/index");
 class SessionRepository {
   async findAll(codCinema) {
     const Sessions = await db.dbQuery(
-      "SELECT * FROM tbSessao where tokenCinema = ? order by dataHorarioSessao asc;",
+      "SELECT * FROM tbSessao where tokenCinema = ? order by dataHorarioSessao desc;",
       [codCinema]
     );
 
     return Promise.all(
       Sessions.map(async (session) => {
-        const date = session.dataHorarioSessao.substring(0, 9).split("-");
+        const date = session.dataHorarioSessao.substring(0, 10).split("-");
 
         const dataSessao = `${date[2].length === 2 ? date[2] : "0" + date[2]}/${
           date[1].length === 2 ? date[1] : "0" + date[1]
@@ -22,6 +22,7 @@ class SessionRepository {
         session.dataSessao = dataSessao;
         session.horarioSessao = horarioSessao;
         delete session.dataHorarioSessao;
+
         if (session.qtdIngressosSessao !== 0) {
           const dbIngressos = await db.dbQuery(
             "SELECT idIngresso, valorIngresso, tipoIngresso FROM tbIngresso where idSessao = ? and idFilme = ?;",
@@ -50,16 +51,66 @@ class SessionRepository {
       console.log(err);
     });
   }
-  async findById(codCinema, idMovie) {
-    if (codCinema == 0 && idMovie) {
+  async findById(codCinema, idMovie, idSession) {
+    if (codCinema == 0 && idMovie != 0) {
       const Sessions = await db.dbQuery(
-        "SELECT * FROM tbSessao where idFilme = ? order by dataHorarioSessao asc;",
+        "SELECT * FROM tbSessao where idFilme = ? order by dataHorarioSessao desc;",
         [idMovie]
       );
 
       return Promise.all(
         Sessions.map(async (session) => {
-          const date = session.dataHorarioSessao.substring(0, 9).split("-");
+          const date = session.dataHorarioSessao.substring(0, 10).split("-");
+
+          const dataSessao = `${
+            date[2].length === 2 ? date[2] : "0" + date[2]
+          }/${date[1].length === 2 ? date[1] : "0" + date[1]}/${date[0]}`;
+
+          const horarioSessao = session.dataHorarioSessao
+            .split(" ")[1]
+            .substring(0, 5);
+
+          session.dataSessao = dataSessao;
+          session.horarioSessao = horarioSessao;
+          delete session.dataHorarioSessao;
+
+          if (session.qtdIngressosSessao !== 0) {
+            const dbIngressos = await db.dbQuery(
+              "SELECT idIngresso, valorIngresso, tipoIngresso FROM tbIngresso where idSessao = ? and idFilme = ?;",
+              [session.idSessao, session.idFilme]
+            );
+
+            const ingressos = [];
+
+            await dbIngressos.map((ingresso) => {
+              ingressos.push(ingresso);
+              return ingresso;
+            });
+
+            session.ingressos = ingressos;
+          } else {
+            session.ingressos = ["Ingressos foram esgotados!"];
+          }
+
+          if (session.hasOwnProperty("idSessao")) {
+            return session;
+          } else {
+            console.log(`error: ${session}`);
+          }
+        })
+      ).catch((err) => {
+        console.log(err);
+      });
+    }
+    if (codCinema == 0 && idMovie == 0) {
+      const Sessions = await db.dbQuery(
+        "SELECT * FROM tbSessao where idSessao = ? order by dataHorarioSessao desc;",
+        [idSession]
+      );
+
+      return Promise.all(
+        Sessions.map(async (session) => {
+          const date = session.dataHorarioSessao.substring(0, 10).split("-");
 
           const dataSessao = `${
             date[2].length === 2 ? date[2] : "0" + date[2]
@@ -103,13 +154,13 @@ class SessionRepository {
     }
 
     const Session = await db.dbQuery(
-      "SELECT * FROM tbSessao WHERE tokenCinema = ? and idFilme = ? order by dataHorarioSessao asc;",
+      "SELECT * FROM tbSessao WHERE tokenCinema = ? and idFilme = ? order by dataHorarioSessao desc;",
       [codCinema, idMovie]
     );
 
     return Promise.all(
       Session.map(async (session) => {
-        const date = session.dataHorarioSessao.substring(0, 9).split("-");
+        const date = session.dataHorarioSessao.substring(0, 10).split("-");
 
         const dataSessao = `${date[2].length === 2 ? date[2] : "0" + date[2]}/${
           date[1].length === 2 ? date[1] : "0" + date[1]

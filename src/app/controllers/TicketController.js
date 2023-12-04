@@ -21,7 +21,17 @@ class TicketController {
     return response.status(200).json(tickets);
   }
   async show(request, response) {
-    const { idUser, idMovie } = request.params;
+    const { idUser, idMovie, idSession } = request.params;
+
+    if (idSession) {
+      const tickets = await TicketRepository.findById(idUser, null, idSession);
+
+      if (!tickets) {
+        return response.status(404).json({ Error: "Tickets not found" });
+      }
+
+      return response.status(200).json(tickets);
+    }
 
     if (!idMovie) {
       const tickets = await TicketRepository.findAll(idUser);

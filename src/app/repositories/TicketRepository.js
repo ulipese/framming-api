@@ -8,7 +8,7 @@ class TicketRepository {
     }
     if (info.length === 36) {
       const tickets = await db.dbQuery(
-        "SELECT idUsuario, idFilme, valorIngresso, tipoIngresso, tbIngresso.idSessao,, tbIngresso.idIngresso FROM tbIngresso inner join tbHistoricoIngresso on tbIngresso.idIngresso = tbHistoricoIngresso.idIngresso where idUsuario = ?;",
+        "SELECT idUsuario, idFilme, valorIngresso, tipoIngresso, tbIngresso.idSessao, tbIngresso.idIngresso FROM tbIngresso inner join tbHistoricoIngresso on tbIngresso.idIngresso = tbHistoricoIngresso.idIngresso where idUsuario = ?;",
         [info]
       );
 
@@ -25,11 +25,19 @@ class TicketRepository {
       return tickets;
     }
   }
-  async findById(idUser, idMovie) {
-    if (idUser) {
+  async findById(idUser, idMovie, idSession) {
+    if (idUser && !idSession) {
       const tickets = await db.dbQuery(
-        "SELECT idUsuario, idFilme, valorIngresso, tipoIngresso, tbIngresso.idSessao,, idIngresso FROM tbIngresso inner join tbHistoricoIngresso on tbIngresso.idIngresso = tbHistoricoIngresso.idIngresso where idUsuario = ? and idFilme = ?;",
+        "SELECT idUsuario, idFilme, valorIngresso, tipoIngresso, tbIngresso.idSessao, tbIngresso.idIngresso FROM tbIngresso inner join tbHistoricoIngresso on tbIngresso.idIngresso = tbHistoricoIngresso.idIngresso where idUsuario = ? and idFilme = ?;",
         [idUser, idMovie]
+      );
+
+      return tickets;
+    }
+    if (idUser && idSession) {
+      const tickets = await db.dbQuery(
+        "SELECT idUsuario, idFilme, valorIngresso, tipoIngresso, tbIngresso.idSessao, tbIngresso.idIngresso FROM tbIngresso inner join tbHistoricoIngresso on tbIngresso.idIngresso = tbHistoricoIngresso.idIngresso where idUsuario = ? and idSessao = ?;",
+        [idUser, idSession]
       );
 
       return tickets;
