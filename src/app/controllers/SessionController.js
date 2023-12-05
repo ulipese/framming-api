@@ -14,7 +14,11 @@ class SessionController {
   async show(request, response) {
     const { codCinema, idMovie, idSession } = request.params;
 
-    const Session = await SessionRepository.findById(codCinema, idMovie, idSession);
+    const Session = await SessionRepository.findById(
+      codCinema,
+      idMovie,
+      idSession
+    );
 
     if (!Session) {
       return response.status(404).json({ Error: "Session not found" });
@@ -40,7 +44,7 @@ class SessionController {
     );
 
     if (createdSession) {
-      return response.status(200).json("Session Created");
+      return response.status(200).json(createdSession);
     }
 
     return response

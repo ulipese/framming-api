@@ -212,7 +212,23 @@ class SessionRepository {
       [codCinema, Session.insertId]
     );
 
-    return CinemaSession;
+    const TicketInteira = await db.dbQuery(
+      "insert into tbIngresso (idFilme, valorIngresso, tipoIngresso, idSessao) values (?, ?, ?, ?)",
+      [idMovie, 30, "inteira", Session.insertId]
+    );
+
+    const TicketMeia = await db.dbQuery(
+      "insert into tbIngresso (idFilme, valorIngresso, tipoIngresso, idSessao) values (?, ?, ?, ?)",
+      [idMovie, 15, "meia", Session.insertId]
+    );
+
+    return {
+      idSessao: Session.insertId,
+      idTickets: {
+        idTicketMeia: TicketMeia.insertId,
+        idTicketInteira: TicketInteira.insertId,
+      },
+    };
   }
   // async update(nameSession, addressSession, numRooms, codSession) {
   //   const Session = await db.dbQuery(
