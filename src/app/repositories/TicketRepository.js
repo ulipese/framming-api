@@ -7,12 +7,36 @@ class TicketRepository {
       return ticket;
     }
     if (info.length === 36) {
-      const tickets = await db.dbQuery(
-        "SELECT idUsuario, idFilme, valorIngresso, tipoIngresso, tbIngresso.idSessao, tbIngresso.idIngresso FROM tbIngresso inner join tbHistoricoIngresso on tbIngresso.idIngresso = tbHistoricoIngresso.idIngresso where idUsuario = ? order by tbHistoricoIngresso.dataCompraIngresso desc;",
+      const dbTickets = await db.dbQuery(
+        "SELECT idUsuario, idFilme, valorIngresso, tipoIngresso, tbHistoricoIngresso.dataCompraIngresso,tbIngresso.idSessao, tbIngresso.idIngresso FROM tbIngresso inner join tbHistoricoIngresso on tbIngresso.idIngresso = tbHistoricoIngresso.idIngresso where idUsuario = ? order by tbHistoricoIngresso.dataCompraIngresso desc;",
         [info]
       );
 
-      return tickets;
+      const arrTickets = [{ idSessao: 8, tickets: [] }];
+
+      await Promise.all(
+        dbTickets.map(async (dbTicket) => {
+          // make map async and await it with Promise.all()
+          const [hasSession] = arrTickets.map((ticket, index) => {
+            if (ticket.idSessao === dbTicket.idSessao) {
+              arrTickets[index].tickets.push(dbTicket);
+            } else {
+              arrTickets.push({
+                idSessao: dbTicket.idSessao,
+                tickets: [dbTicket],
+              });
+            }
+          });
+
+          if (dbTicket.hasOwnProperty("idSessao")) {
+            return hasSession;
+          } else {
+            console.log(`error: ${completeMovie}`);
+          }
+        })
+      ).catch((err) => console.log(err));
+
+      return arrTickets;
     } else {
       const tickets = await db.dbQuery(
         `SELECT nomeCinema, enderecoCinema, idFilme, tbIngresso.idSessao, valorIngresso, tipoIngresso, tokenCinema, tbIngresso.idIngresso
@@ -35,12 +59,12 @@ class TicketRepository {
       return tickets;
     }
     if (idUser && idSession) {
-      const tickets = await db.dbQuery(
+      const dbTickets = await db.dbQuery(
         "SELECT idUsuario, idFilme, valorIngresso, tipoIngresso, tbIngresso.idSessao, tbIngresso.idIngresso FROM tbIngresso inner join tbHistoricoIngresso on tbIngresso.idIngresso = tbHistoricoIngresso.idIngresso where idUsuario = ? and idSessao = ? order by tbHistoricoIngresso.dataCompraIngresso desc;",
         [idUser, idSession]
       );
 
-      return tickets;
+      return dbTickets;
     }
 
     const tickets = await db.dbQuery(
