@@ -200,9 +200,9 @@ DELIMITER //
 		end if;
     end
 //
-
--- call spCriarUsuario('36efc959-0425-4e81-8730-463e4f1ab09f', '', 'Felipe Sousa', 'lipe', 'lipe@gmail.com', '$2b$10$uF/uWmwRe/WJ5y9BpeHauueC0bNKrQCtfiUVNa1ENwyYtskYh04hW', 'nor'); -- nor / fun / adm
--- call spCriarUsuario('8a9be714-c40d-4cbc-98b2-6df9f16ad216', '', 'Mateus Coripio', 'matcop', 'mat@gmail.com', '$2b$10$hlRAJtuWrlNxqHZA6QqKQOWBG.hkJ.E9EIifmalqzF6e/giFOVjBq', 'adm');
+-- select * from tbSessao where tokenCinema = 3254 order by dataHorarioSessao desc;
+-- call spCriarUsuario('36BcA959-0425-4c81-8830-473e4f1ca09L', '', 'Beatriz das Chagas Silva', 'biacha', 'biacha@gmail.com', '$2b$10$uF/uWmwRe/WJ5y9BpeHauueC0bNKrQCtfiUVNa1ENwyYtskYh04hW', 'adm', 0); -- nor / fun / adm
+-- call spCriarUsuario('8a9be714-c40d-4cbc-98b2-6df9f16ad216', '', 'Mateus Coripio', 'matcop', 'mat@gmail.com', '$2b$10$hlRAJtuWrlNxqHZA6QqKQOWBG.hkJ.E9EIifmalqzF6e/giFOVjBq', 'adm', 0);
 
 # drop procedure spCurtidaCritica
 DELIMITER //
@@ -343,6 +343,9 @@ END //
 -- set global event_scheduler=ON
 -- set global max_connections = 10000;
 
+select * from tbSessao where idSessao = 8;
+
+select * from tbHistoricoIngresso;
 # drop procedure spCompraIngresso
 DELIMITER //
 	create procedure spCompraIngresso(vIdUsuario varchar(36), vIdFilme bigint, vIdIngresso int, vNumeroCartaoPagamento bigint, vNumIngressos int)
@@ -353,14 +356,20 @@ DELIMITER //
 				set @idPagamento = (select idPagamento from tbPagamento where idUsuario = vIdUsuario and numeroCartao = vNumeroCartaoPagamento);
 				set @idSessao = (select idSessao from tbIngresso where idIngresso = vIdIngresso);
                 
-                if (select qtdIngressosSessao from tbSessao where idSessao = @idSessao) > 0 then
-					insert into tbNFIngresso (idUsuario, idPagamento) values (vIdUsuario, @idPagamento);
-					insert into tbHistoricoIngresso values (vIdIngresso, vIdUsuario, current_timestamp());
-					update tbSessao set qtdIngressosSessao = ((select qtdIngressosSessao from tbSessao where idSessao = @idSessao) - vNumIngressos) where idSessao = @idSessao;
-                    SELECT idUsuario, idFilme, valorIngresso, tipoIngresso, idSessao, tbIngresso.idIngresso, tbHistoricoIngresso.dataCompraIngresso FROM tbIngresso inner join tbHistoricoIngresso on tbIngresso.idIngresso = tbHistoricoIngresso.idIngresso where idUsuario = vIdUsuario and idFilme = vIdFilme order by dataCompraIngresso desc limit vNumIngressos;
-				else
+				 if ((select qtdIngressosSessao from tbSessao where idSessao = @idSessao) > 0) then
+					if (vNumIngressos > 0) then
+						insert into tbNFIngresso (idUsuario, idPagamento) values (vIdUsuario, @idPagamento);
+						insert into tbHistoricoIngresso values (vIdIngresso, vIdUsuario, current_timestamp());
+						update tbSessao set qtdIngressosSessao = ((select qtdIngressosSessao from tbSessao where idSessao = @idSessao) - vNumIngressos) where idSessao = @idSessao;
+						SELECT idUsuario, idFilme, valorIngresso, tipoIngresso, idSessao, tbIngresso.idIngresso, tbHistoricoIngresso.dataCompraIngresso FROM tbIngresso inner join tbHistoricoIngresso on tbIngresso.idIngresso = tbHistoricoIngresso.idIngresso where idUsuario = vIdUsuario and idFilme = vIdFilme and tbIngresso.idIngresso = vIdIngresso order by dataCompraIngresso desc limit vNumIngressos;
+					else
+						insert into tbHistoricoIngresso values (vIdIngresso, vIdUsuario, current_timestamp());
+						SELECT idUsuario, idFilme, valorIngresso, tipoIngresso, idSessao, tbIngresso.idIngresso, tbHistoricoIngresso.dataCompraIngresso FROM tbIngresso inner join tbHistoricoIngresso on tbIngresso.idIngresso = tbHistoricoIngresso.idIngresso where idUsuario = vIdUsuario and idFilme = vIdFilme and tbIngresso.idIngresso = vIdIngresso order by dataCompraIngresso desc limit vNumIngressos;
+                    end if;
+                else
 					select 'Ingressos já estão esgotados';
 				end if;
+                
 			else 
 				select 'Pagamento inválido';
 			end if;
@@ -373,9 +382,9 @@ DELIMITER //
     end
 //
 
--- select * from tbSessao where idSessao = 2;
--- update tbSessao set qtdIngressosSessao = 4 where idSessao = 2;
-
+-- select * from tbSessao where idSessao = 6;
+-- update tbSessao set qtdIngressosSessao = 50 where idSessao = 8;
+-- select * from tbIngresso where idIngresso = 8;
 -- insert into tbListaFilme values (2, 901362);
 -- select * from tbLista;
 -- update tbLista set qtdCurtidaLista = (select qtdCurtidaLista from tbLista where idLista = 1 and idUsuario = '36efc959-0425-4e81-8730-463e4f1ab09f') + 1 where idUsuario = '36efc959-0425-4e81-8730-463e4f1ab09f' and idLista = 1;

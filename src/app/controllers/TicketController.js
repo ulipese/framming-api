@@ -23,7 +23,7 @@ class TicketController {
   async show(request, response) {
     const { idUser, idMovie, idSession } = request.params;
 
-    if (idSession) {
+    if (!idMovie && idSession) {
       const tickets = await TicketRepository.findById(idUser, null, idSession);
 
       if (!tickets) {
@@ -33,7 +33,7 @@ class TicketController {
       return response.status(200).json(tickets);
     }
 
-    if (!idMovie) {
+    if (idUser && !idMovie && !idSession) {
       const tickets = await TicketRepository.findAll(idUser);
 
       if (!tickets) {
@@ -82,7 +82,7 @@ class TicketController {
     );
 
     if (createdTicket) {
-      return response.status(200).json("Ticket Created");
+      return response.status(200).json({"idTicket": createdTicket.insertId});
     }
 
     return response
