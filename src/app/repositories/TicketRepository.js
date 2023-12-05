@@ -8,35 +8,44 @@ class TicketRepository {
     }
     if (info.length === 36) {
       const dbTickets = await db.dbQuery(
-        "SELECT idUsuario, idFilme, valorIngresso, tipoIngresso, tbHistoricoIngresso.dataCompraIngresso,tbIngresso.idSessao, tbIngresso.idIngresso FROM tbIngresso inner join tbHistoricoIngresso on tbIngresso.idIngresso = tbHistoricoIngresso.idIngresso where idUsuario = ? order by tbHistoricoIngresso.dataCompraIngresso desc;",
+        "SELECT idUsuario, idFilme, valorIngresso, tipoIngresso, tbHistoricoIngresso.dataCompraIngresso,tbIngresso.idSessao, tbIngresso.idIngresso FROM tbIngresso inner join tbHistoricoIngresso on tbIngresso.idIngresso = tbHistoricoIngresso.idIngresso where idUsuario = ? order by tbIngresso.idSessao desc;",
         [info]
       );
 
-      const arrTickets = [{ idSessao: 8, tickets: [] }];
+      const ids = [];
+      const arrTickets = [{ idSessao: 0, qtdTickets: 0 }];
+
+      dbTickets.map((ticket) => {
+        if (!ids.includes(ticket.idSessao)) {
+          return ids.push(ticket.idSessao);
+        }
+      });
+
+      console.log(ids);
 
       await Promise.all(
-        dbTickets.map(async (dbTicket) => {
+        ids.map(async (idSessao) => {
           // make map async and await it with Promise.all()
-          const [hasSession] = arrTickets.map((ticket, index) => {
-            if (ticket.idSessao === dbTicket.idSessao) {
-              arrTickets[index].tickets.push(dbTicket);
-            } else {
-              arrTickets.push({
-                idSessao: dbTicket.idSessao,
-                tickets: [dbTicket],
-              });
-            }
-          });
+          const [countSessions] = await db.dbQuery(
+            "SELECT count(idSessao) FROM tbIngresso inner join tbHistoricoIngresso on tbIngresso.idIngresso = tbHistoricoIngresso.idIngresso where idUsuario = ? and idSessao = ? order by tbIngresso.idSessao desc;",
+            [info, idSessao]
+          );
 
-          if (dbTicket.hasOwnProperty("idSessao")) {
-            return hasSession;
+          console.log();
+
+          if (countSessions) {
+            arrTickets.push({
+              idSessao: idSessao,
+              qtdTickets: countSessions["count(idSessao)"],
+            });
+            return countSessions;
           } else {
-            console.log(`error: ${completeMovie}`);
+            console.log(`error: ${countSessions}`);
           }
         })
       ).catch((err) => console.log(err));
 
-      return arrTickets;
+      return arrTickets.slice(1);
     } else {
       const tickets = await db.dbQuery(
         `SELECT nomeCinema, enderecoCinema, idFilme, tbIngresso.idSessao, valorIngresso, tipoIngresso, tokenCinema, tbIngresso.idIngresso
