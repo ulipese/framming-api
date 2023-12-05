@@ -212,21 +212,31 @@ class SessionRepository {
       [codCinema, Session.insertId]
     );
 
-    const TicketInteira = await db.dbQuery(
+    const CreatedTicketInteira = await db.dbQuery(
       "insert into tbIngresso (idFilme, valorIngresso, tipoIngresso, idSessao) values (?, ?, ?, ?)",
       [idMovie, 30, "inteira", Session.insertId]
     );
 
-    const TicketMeia = await db.dbQuery(
+    const CreatedTicketMeia = await db.dbQuery(
       "insert into tbIngresso (idFilme, valorIngresso, tipoIngresso, idSessao) values (?, ?, ?, ?)",
       [idMovie, 15, "meia", Session.insertId]
     );
 
+    const [ticketInteira] = await db.dbQuery(
+      "SELECT idIngresso, valorIngresso, tipoIngresso from tbIngresso where idIngresso = ?;",
+      [CreatedTicketInteira.insertId]
+    );
+
+    const [ticketMeia] = await db.dbQuery(
+      "SELECT idIngresso, valorIngresso, tipoIngresso from tbIngresso where idIngresso = ?;",
+      [CreatedTicketMeia.insertId]
+    );
+
     return {
       idSessao: Session.insertId,
-      idTickets: {
-        idTicketMeia: TicketMeia.insertId,
-        idTicketInteira: TicketInteira.insertId,
+      tickets: {
+        TicketMeia: ticketMeia,
+        idTicketInteira: ticketInteira,
       },
     };
   }
