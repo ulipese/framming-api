@@ -51,7 +51,7 @@ class ListController {
     const createdList = await ListRepository.create(idUser, listDescription);
 
     if (createdList) {
-      return response.status(201).json("The list was created");
+      return response.status(201).json({ idLista: createdList.insertId });
     }
     return response
       .status(502)

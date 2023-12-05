@@ -25,7 +25,7 @@ class ListRepository {
       where tbLista.idLista = ?;`,
       [idList]
     );
-    const movies = [];
+    const movies = { movies: [] };
 
     await Promise.all(
       listMovies.map(async (movie) => {
@@ -45,7 +45,7 @@ class ListRepository {
           completeMovie.hasOwnProperty("original_title") &&
           completeMovie.hasOwnProperty("notaFilme")
         ) {
-          movies.push(completeMovie);
+          movies.movies.push(completeMovie);
           return completeMovie;
         } else {
           console.log(`error: ${completeMovie}`);
