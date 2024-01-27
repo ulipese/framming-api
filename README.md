@@ -1,7 +1,7 @@
 # framming-api
 
-## URL de acesso da API
-https://https://framming-api.onrender.com/
+## URL de acesso da API (public)
+https://framming-api.onrender.com/
 
 ## Endpoints
 
